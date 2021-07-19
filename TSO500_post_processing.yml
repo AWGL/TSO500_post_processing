@@ -5,8 +5,8 @@ channels:
   - defaults
 dependencies:
 
-  - bzip2=1.0.8=h7b6447c_0
-  - gatk4=4.2.0.0=hdfd78af_1
-  - samtools=1.7=1
-  - tabix=0.2.6=ha92aebf_0
+  - bzip2=1.0.8
+  - gatk4=4.2.0.0
+  - samtools=1.7
+  - tabix=0.2.6
 
