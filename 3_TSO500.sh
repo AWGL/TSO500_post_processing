@@ -52,4 +52,23 @@ cd $SLURM_SUBMIT_DIR
 touch run_complete.txt
 
 
+#Create variants table in correct format to import to database
+
+for worksheetid in $(cat worksheet_list.txt); do
+
+	python NTC_parse.py --ntcfile NTC-"$worksheetid"_CombinedVariantOutput.tsv --outfile NTC-"$worksheetid"_variant_ids.csv
+
+	for sample in $(cat samples_correct_order_"$worksheet"_DNA.csv); do
+
+		python tsv_to_db.py --tsvfile "$sample_id"_CombinedVariantOutput.tsv --ntcvarfile NTC-"$worksheetid"_variant_ids.csv --outfile db_variants_"$worksheet".csv
+	done
+
+done
+
+
+#Run contamination script
+
+python contamination_TSO500.py $seqid $sample_id $version
+
+
 rm -r $SCRATCH_DIR

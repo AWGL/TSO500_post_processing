@@ -40,6 +40,29 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
 
 cp -r $sample_id $SLURM_SUBMIT_DIR/$sample_id
 
+
+bash depthofcoverage.sh $runid $sample_id $version
+
+
+#get correct order of samples for each worksheet
+
+cp /data/archive/novaseq/"$runid"/SampleSheet.csv .
+sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
+python filter_sample_list.py
+
+
+
+#filter fusion table by genes in panel for contamination script
+
+if [ -e "$path"/"$sample"/Results/"$sample"/"$sample"_AllFusions.csv ]
+    then
+	
+	python filter_fusions_table.py 
+fi
+
+
+
+
 ##############################################################################################
 # Run level
 ##############################################################################################
