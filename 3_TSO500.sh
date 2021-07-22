@@ -54,21 +54,29 @@ touch run_complete.txt
 
 #Create variants table in correct format to import to database
 
-for worksheetid in $(cat worksheet_list.txt); do
+for worksheetid in $(cat worksheets_dna.txt); do
 
 	python NTC_parse.py --ntcfile NTC-"$worksheetid"_CombinedVariantOutput.tsv --outfile NTC-"$worksheetid"_variant_ids.csv
 
 	for sample in $(cat samples_correct_order_"$worksheet"_DNA.csv); do
 
-		python tsv_to_db.py --tsvfile "$sample_id"_CombinedVariantOutput.tsv --ntcvarfile NTC-"$worksheetid"_variant_ids.csv --outfile db_variants_"$worksheet".csv
+		python tsv_to_db.py --tsvfile "$sample"_CombinedVariantOutput.tsv --ntcvarfile NTC-"$worksheetid"_variant_ids.csv --outfile db_variants_"$worksheet".csv
 	done
 
 done
 
+#compileQC report
+bash compileQcReport.sh "$runid"
+
+for worksheetid in $(cat worksheets_rna.txt); do
+	for sample in $(cat samples_correct_order_"$worksheet"_RNA.csv); do
+		python fusions_check_with_ntc.py ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv ./Gathered_Results/Results/NTC-"$worksheetid"/NTC-"$worksheetid"_CombinedVariantOutput.tsv ./Gathered_Results/Results/"$sample_id"/
+done
+done
 
 #Run contamination script
-
-python contamination_TSO500.py $seqid $sample_id $version
+for worksheetid in $(cat worksheets_rna.txt); do
+	python contamination_TSO500.py "$run_id" "$worksheetid" "$version"
 
 
 rm -r $SCRATCH_DIR
