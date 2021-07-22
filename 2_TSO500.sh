@@ -41,15 +41,36 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
 cp -r $sample_id $SLURM_SUBMIT_DIR/$sample_id
 
 
+#run fastqc
+
+mkdir FastQC
+
+fastqc_path="/Output/validations/TSO500/"$runid"
+
+fastq_path="/Output/validations/TSO500/"$runid"/Demultiplex_Output/Logs_Intermediates/FastqGeneration/"$sample_id/"
+cd "$fastq_path"
+
+for fastqPair in $(ls "$sample_id"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
+
+    #parse fastq filenames
+    laneId=$(echo "$fastqPair" | cut -d_ -f3)
+    read1Fastq=$(ls "$fastqPair"_R1_*fastq.gz)
+    read2Fastq=$(ls "$fastqPair"_R2_*fastq.gz)
+
+
+    fastqc -o "$fastqc_path"/FastQC "$sampleId"_"$laneId"_R1.fastq
+    fastqc -o "$fastqc_path"/FastQC "$sampleId"_"$laneId"_R2.fastq
+
+    mv "$fastqc_path"/"$sampleId"_"$laneId"_R1_fastqc/summary.txt "$fastqc_path"/"$sampleId"_"$laneId"_R1_fastqc.txt
+    mv "$fastqc_path"/"$sampleId"_"$laneId"_R2_fastqc/summary.txt "$fastqc_path"/"$sampleId"_"$laneId"_R2_fastqc.txt
+
+done
+
+cd "/Output/validations/TSO500/"$runid"
+
+
+
 bash depthofcoverage.sh $runid $sample_id $version
-
-
-#get correct order of samples for each worksheet
-
-cp /data/archive/novaseq/"$runid"/SampleSheet.csv .
-sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
-python filter_sample_list.py
-
 
 
 #filter fusion table by genes in panel for contamination script

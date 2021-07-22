@@ -1,6 +1,10 @@
 import pandas
 
 table=pandas.read_csv("SampleSheet_updated.csv", sep=",")
+sample_list=table['Sample_ID']
+sample_list.to_csv("sample_list.txt", index=False, header=False)
+
+
 print(table)
 table=table[["Sample_ID", "Sample_Plate","Sample_Type", "Description"]]
 

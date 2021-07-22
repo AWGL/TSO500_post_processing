@@ -43,8 +43,12 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
 # mkdir app_output
 # cd app_output
 
-# make a list of samples (-A 500 gives number of lines after data section header - will need increasing if we get >500 samples)
-grep -A 500 "^Sample_ID" $raw_data"SampleSheet.csv" | grep -v ^Sample_ID | cut -d, -f1 > sample_list.txt
+
+# make a list of samples and get correct order of samples for each worksheet
+
+cp /data/archive/novaseq/"$runid"/SampleSheet.csv .
+sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
+python filter_sample_list.py
 
 # make an empty file for recording completed samples 
 > completed_samples.txt
