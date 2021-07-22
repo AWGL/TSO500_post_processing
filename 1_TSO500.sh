@@ -29,7 +29,7 @@ ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/
 # make sure to use singularity flag
 $pipeline_dir/TruSight_Oncology_500_RUO.sh \
   --resourcesFolder $pipeline_dir/resources \
-  --analysisFolder cd $SLURM_SUBMIT_DIR/Demultiplex_Output \
+  --analysisFolder $SLURM_SUBMIT_DIR/Demultiplex_Output \
   --runFolder $raw_data \
   --engine singularity \
   --sampleSheet "$raw_data"/SampleSheet.csv \
@@ -46,9 +46,13 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
 
 # make a list of samples and get correct order of samples for each worksheet
 
-cp /data/archive/novaseq/"$runid"/SampleSheet.csv .
+cp "$raw_data"/SampleSheet.csv .
+
+# remove header
 sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
-python filter_sample_list.py
+
+# 
+python "$pipeline_dir"/filter_sample_list.py
 
 # make an empty file for recording completed samples 
 > completed_samples.txt

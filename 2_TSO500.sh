@@ -13,10 +13,9 @@
 
 version=2.2.0
 
-SCRATCH_DIR=/localscratch/"$SLURM_JOB_ID"
-mkdir -p "$SCRATCH_DIR"
-cd "$SCRATCH_DIR"
+cd "$SLURM_SUBMIT_DIR"
 mkdir $sample_id
+#cd $sample_id
 
 module purge
 module load singularity
@@ -26,28 +25,25 @@ set -euo pipefail
 
 pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"
 
-ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
 
 # use sampleOrPairIDs flag to run one sample at a time
 $pipeline_dir/TruSight_Oncology_500_RUO.sh \
-  --analysisFolder $sample_id \
+  --analysisFolder "$SLURM_SUBMIT_DIR"/"$sample_id" \
   --resourcesFolder $pipeline_dir/resources \
-  --fastqFolder $SLURM_SUBMIT_DIR/Demultiplex_Output \
+  --fastqFolder "$SLURM_SUBMIT_DIR"/Demultiplex_Output \
   --isNovaSeq \
-  --sampleSheet "$raw_data"SampleSheet.csv \
+  --sampleSheet "$raw_data"/SampleSheet.csv \
   --engine singularity \
   --sampleOrPairIDs $sample_id
-
-cp -r $sample_id $SLURM_SUBMIT_DIR/$sample_id
 
 
 #run fastqc
 
 mkdir FastQC
 
-fastqc_path="/Output/validations/TSO500/"$runid"
+fastqc_path="./FastQC/"
 
-fastq_path="/Output/validations/TSO500/"$runid"/Demultiplex_Output/Logs_Intermediates/FastqGeneration/"$sample_id/"
+fastq_path="./Demultiplex_Output/Logs_Intermediates/FastqGeneration/"$sample_id/"
 cd "$fastq_path"
 
 for fastqPair in $(ls "$sample_id"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); do
@@ -66,19 +62,19 @@ for fastqPair in $(ls "$sample_id"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq); d
 
 done
 
-cd "/Output/validations/TSO500/"$runid"
+cd "/Output/results/"$run_id/"
 
 
 
-bash depthofcoverage.sh $runid $sample_id $version
+bash "$pipeline_dir"/depthofcoverage.sh $run_id $sample_id $version
 
 
 #filter fusion table by genes in panel for contamination script
 
-if [ -e "$path"/"$sample"/Results/"$sample"/"$sample"_AllFusions.csv ]
+if [ -e "$path"/"$sample_id"/Results/"$sample_id"/"$sample_id"_AllFusions.csv ]
     then
 	
-	python filter_fusions_table.py 
+	"$pipeline_dir"/python filter_fusions_table.py 
 fi
 
 
@@ -105,6 +101,3 @@ if [ "$complete" -eq "$expected" ]; then
     sbatch --export=raw_data="$raw_data" 3_TSO500.sh
 
 fi
-
-# remove scratch dir
-rm -r $SCRATCH_DIR
