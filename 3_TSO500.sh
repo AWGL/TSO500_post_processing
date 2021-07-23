@@ -15,9 +15,6 @@ version=2.2.0
 
 #cd "$SLURM_SUBMIT_DIR"
 
-SCRATCH_DIR=/localscratch/"$SLURM_JOB_ID"
-mkdir -p "$SCRATCH_DIR"
-cd "$SCRATCH_DIR"
 mkdir Gathered_Results
 
 module purge
