@@ -13,12 +13,8 @@
 
 version=2.2.0
 
-#cd "$SLURM_SUBMIT_DIR"
+cd "$SLURM_SUBMIT_DIR"
 
-SCRATCH_DIR=/localscratch/"$SLURM_JOB_ID"
-mkdir -p "$SCRATCH_DIR"
-cd "$SCRATCH_DIR"
-mkdir Gathered_Results
 
 module purge
 module load singularity
@@ -31,52 +27,43 @@ pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp
 # run with gather flag
 #mkdir Gathered_Results
 
-samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
+#samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
 
-ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
-
-# make sure to use singularity flag
-$pipeline_dir/TruSight_Oncology_500_RUO.sh \
-  --analysisFolder Gathered_Results \
-  --resourcesFolder $pipeline_dir/resources \
-  --runFolder $raw_data \
-  --isNovaSeq \
-  --sampleSheet "$raw_data"SampleSheet.csv \
-  --engine singularity \
-  --gather $samples_to_gather
-
-cp -r Gathered_Results/Results $SLURM_SUBMIR_DIR/Gathered_Results
+#ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
 
 # run custom analysis
 cd $SLURM_SUBMIT_DIR
 touch run_complete.txt
 
 
-#Create variants table in correct format to import to database
-
+#Create variants and coverage tables in correct format to import to database
 for worksheetid in $(cat worksheets_dna.txt); do
+	for line in $(cat samples_correct_order_"$worksheetid"_DNA.csv); do
+		sample="$(echo "$line" | cut -d, -f1)"
+		worksheetid=$(echo "$line" | cut -d, -f2)
+		referral=$(echo "$line" | cut -d, -f4)
+		python "$pipeline_dir"/tsv2db.py --tsvfile ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv --ntcfile ./Gathered_Results/Results/NTC-"$worksheetid"/NTC-"$worksheetid"_CombinedVariantOutput.tsv --outfile ./Gathered_Results/Results/"$sample"/tsv2db_output.tsv
+		python "$pipeline_dir"/coverage2json.py --referral "$referral" --groups_folder "$pipeline_dir"/hotspot_coverage --sample_coverage "$sample"/Coverage_results/ --ntc_coverage NTC-"$worksheetid"/Coverage_results/
 
-	python NTC_parse.py --ntcfile NTC-"$worksheetid"_CombinedVariantOutput.tsv --outfile NTC-"$worksheetid"_variant_ids.csv
-
-	for sample in $(cat samples_correct_order_"$worksheet"_DNA.csv); do
-
-		python tsv_to_db.py --tsvfile "$sample"_CombinedVariantOutput.tsv --ntcvarfile NTC-"$worksheetid"_variant_ids.csv --outfile db_variants_"$worksheet".csv
 	done
+done
 
+
+#create fusions table in correct format to import to database
+for worksheetid in $(cat worksheets_rna.txt); do
+	for line in $(cat samples_correct_order_"$worksheetid"_RNA.csv); do
+		sample="$(echo "$line" | cut -d, -f1)"
+		worksheetid=$(echo "$line" | cut -d, -f2)
+		python "$pipeline_dir"/fusions_check_with_ntc.py ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv ./Gathered_Results/Results/NTC-"$worksheetid"/NTC-"$worksheetid"_CombinedVariantOutput.tsv ./Gathered_Results/Results/"$sample"/
+	done
 done
 
 #compileQC report
-bash compileQcReport.sh "$runid"
-
-for worksheetid in $(cat worksheets_rna.txt); do
-	for sample in $(cat samples_correct_order_"$worksheet"_RNA.csv); do
-		python fusions_check_with_ntc.py ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv ./Gathered_Results/Results/NTC-"$worksheetid"/NTC-"$worksheetid"_CombinedVariantOutput.tsv ./Gathered_Results/Results/"$sample_id"/
-done
-done
+bash compileQcReport.sh
 
 #Run contamination script
-for worksheetid in $(cat worksheets_rna.txt); do
-	python contamination_TSO500.py "$run_id" "$worksheetid" "$version"
+#for worksheetid in $(cat worksheets_rna.txt); do
+#	python contamination_TSO500.py "$run_id" "$worksheetid" "$version"
+#done
 
 
-rm -r $SCRATCH_DIR
