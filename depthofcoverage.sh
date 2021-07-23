@@ -10,18 +10,17 @@ cd "$SLURM_SUBMIT_DIR"
 module load anaconda
 
 
-runid=$1
-sampleid=$2
-version=$3
+sampleid=$1
+version=$2
 
 
 minimum_coverage=270,135
 
-bam_path=/Output/validations/TSO500/"$runid"/"$sampleid"/Logs_Intermediates/StitchedRealigned/"$sampleid"/
-vendor_capture_bed=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/vendorCaptureBed_100pad_updated.bed
+bam_path=./"$sampleid"/Logs_Intermediates/StitchedRealigned/"$sampleid"/
+vendor_capture_bed=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"/vendorCaptureBed_100pad_updated.bed
 
-mkdir /Output/validations/TSO500/"$runid"/"$sampleid"/Results/"$sampleid"/depth_results
-depth_path=/Output/validations/TSO500/"$runid"/"$sampleid"/Results/"$sampleid"/depth_results
+mkdir ./"$sampleid"/Results/"$sampleid"/depth_results
+depth_path=./"$sampleid"/Results/"$sampleid"/depth_results
 coverage_bed_files_path=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"/hotspot_coverage
 
 
@@ -52,7 +51,7 @@ samtools index "$bam_path"/"$sampleid"_add_rg.bam "$bam_path"/"$sampleid"_add_rg
 gatk DepthOfCoverage \
 -I "$bam_path""$sampleid"_add_rg.bam \
 -L "$vendor_capture_bed" \
--R /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/resources/genomes/hg19_hardPAR/genome.fa \
+-R /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"/resources/genomes/hg19_hardPAR/genome.fa \
 -O "$depth_path"/"$sampleid"_depth_of_coverage
 
 
