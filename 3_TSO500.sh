@@ -13,8 +13,12 @@
 
 version=2.2.0
 
-cd "$SLURM_SUBMIT_DIR"
+#cd "$SLURM_SUBMIT_DIR"
 
+SCRATCH_DIR=/localscratch/"$SLURM_JOB_ID"
+mkdir -p "$SCRATCH_DIR"
+cd "$SCRATCH_DIR"
+mkdir Gathered_Results
 
 module purge
 module load singularity
@@ -25,11 +29,23 @@ set -euo pipefail
 pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"
 
 # run with gather flag
-#mkdir Gathered_Results
+mkdir Gathered_Results
 
-#samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
+samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
 
-#ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
+ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
+
+# make sure to use singularity flag
+$pipeline_dir/TruSight_Oncology_500_RUO.sh \
+  --analysisFolder Gathered_Results \
+  --resourcesFolder $pipeline_dir/resources \
+  --runFolder $raw_data \
+  --isNovaSeq \
+  --sampleSheet "$raw_data"SampleSheet.csv \
+  --engine singularity \
+  --gather $samples_to_gather
+
+cp -r Gathered_Results/Results $SLURM_SUBMIR_DIR/Gathered_Results
 
 # run custom analysis
 cd $SLURM_SUBMIT_DIR
