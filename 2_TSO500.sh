@@ -85,13 +85,13 @@ cd $SLURM_SUBMIT_DIR
 echo $sample_id >> completed_samples.txt
 
 # only run once all samples have finished
-#expected=$(cat sample_list.txt| wc -l)
-#complete=$(cat completed_samples.txt | wc -l)
+expected=$(cat sample_list.txt| wc -l)
+complete=$(cat completed_samples.txt | wc -l)
 
 
-#if [ "$complete" -eq "$expected" ]; then
+if [ "$complete" -eq "$expected" ]; then
 
-#    touch entered_loop.txt
-#    sbatch --export=raw_data="$raw_data" 3_TSO500.sh
+    touch entered_loop.txt
+    sbatch --export=raw_data="$raw_data" 3_TSO500.sh
 
-#fi
+fi
