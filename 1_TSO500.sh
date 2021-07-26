@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #SBATCH --time=06:00:00
-#SBATCH --output=%j-%N-1_TSO500.output
-#SBATCH --error=%j-%N-1_TSO500.error
+#SBATCH --output=Demultiplex_Output-%j-%N.out
+#SBATCH --error=Demultiplex_Output-%j-%N.err
 #SBATCH --partition=demultiplexing
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=24
 
 # Description: Demultiplex run using Illumina TSO500 app
 # Author:      AWMGS
@@ -17,6 +17,7 @@ pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp
 
 cd $SLURM_SUBMIT_DIR
 mkdir Demultiplex_Output
+mkdir analysis
 
 module purge
 module load singularity
@@ -25,6 +26,11 @@ module load singularity
 set -euo pipefail
 
 ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
+
+
+##############################################################################################
+#  Illumina app
+##############################################################################################
 
 # make sure to use singularity flag
 $pipeline_dir/TruSight_Oncology_500_RUO.sh \
@@ -36,12 +42,10 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
   --isNovaSeq \
   --demultiplexOnly
 
-# TODO - make variables files
 
-# TODO - cd into /Output/results/run_id
-
-# mkdir app_output
-# cd app_output
+##############################################################################################
+#  Make variant lists for use downstream
+##############################################################################################
 
 
 # make a list of samples and get correct order of samples for each worksheet
@@ -57,14 +61,20 @@ python "$pipeline_dir"/filter_sample_list.py
 # make an empty file for recording completed samples 
 > completed_samples.txt
 
+
+##############################################################################################
+#  Kick off script 2
+##############################################################################################
+
 # kick off script 2 for each sample
 cat sample_list.txt | while read line; do
 
-
-    # TODO - make sample folder
-
     echo kicking off pipeline for $line
-    sbatch --export=raw_data="$raw_data",sample_id="$line" 2_TSO500.sh
+    sbatch \
+      --export=raw_data="$raw_data",sample_id="$line" \
+      --output="$line"_2_TSO500-%j-%N.out \
+      --error="$line"_2_TSO500-%j-%N.err \
+      2_TSO500.sh
 
 done
 
