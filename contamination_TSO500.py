@@ -10,12 +10,10 @@ referrals_path="/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_Local
 
 #need to determine if the samples are RNA or need samples_correct_order_file- with second column for dna or rna
 samples_file = pandas.read_csv("./samples_correct_order_"+worksheetid+"_RNA.csv", sep=",", names=["Sample", "Worksheet", "Type", "Referral"])
-print(samples_file)
 
 
 sampleList=samples_file["Sample"].tolist()
 len_sample_list=len(sampleList)
-print(sampleList)
 
 #contamination dictionary
 contamination=["No"]*len_sample_list
@@ -51,7 +49,7 @@ for sample in sampleList:
             fusion=all_fusions_table[(all_fusions_table.type=="Fusion")]
             report=splice_fusion.append(fusion)
         else:
-            report=splice_fusion
+            report=all_fusions_table
 
         #get list of genes in the referral for the sample to be used to filter file with all fusions by referral later
         referral_file=pandas.read_csv(referrals_path+"/"+referral+".txt", sep="\t")
@@ -79,7 +77,7 @@ for sample in sampleList:
                 fusion_previous=all_fusions_table_previous[(all_fusions_table_previous.type=="Fusion")]
                 report_previous=splice_fusion_previous.append(fusion_previous)
             else:
-                report_previous=splice_fusion_previous
+                report_previous=all_fusions_table_previous
 
  
         if (sample_number!=(len_sample_list-1)):
@@ -94,17 +92,15 @@ for sample in sampleList:
                 fusion_next=all_fusions_table_next[(all_fusions_table_next.type=="Fusion")]
                 report_next=splice_fusion_next.append(fusion_next)
             else:
-                report_next=splice_fusion_next
+                report_next=all_fusions_table_next
 
 
         fusion_list=[]
         fusion_list_previous=[]
         fusion_list_next=[]
+        report=report[report["fusion"].str.contains(tumour_referrals)]
         if (len(report)>0):
-            report=report[report["fusion"].str.contains(tumour_referrals)]
-            if (len(report)>0):
-                fusion_list1=report["fusion"].tolist()
-                print(fusion_list1)
+            fusion_list1=report["fusion"].tolist()
 
             #get a list of fusions with the genes the alternate way round
             report["fusion"]=report["fusion"].astype(str)
@@ -119,6 +115,7 @@ for sample in sampleList:
 
             #compare the list of fusions in the current sample with those in the sample before
             if (sample_number!=0):
+                report_previous=report_previous[report_previous["fusion"].str.contains(tumour_referrals)]
                 if (len(report_previous)>0):
                     
                     #TODO- filter by the tumour config file instead of making it hard coded 
@@ -145,6 +142,7 @@ for sample in sampleList:
 
             #compare the list of fusions in the current sample with those in the sample after
             if (sample_number<(len_sample_list-1)):
+                report_next=report_next[report_next["fusion"].str.contains(tumour_referrals)]
                 if (len(report_next)>0):
                     report_next=report_next[report_next["fusion"].str.contains(tumour_referrals)]
                     if (len(report_next)>0):
@@ -177,14 +175,17 @@ for sample in sampleList:
 
 
 	        # read in fusions file for sample referral and duplicate the gene for splice variants in the fusions column
-                all_fusions_table_referral= pandas.read_csv("./Gathered_Results/Results/"+sample+"/"+gene+"_fusions.csv", sep=",")
+
+                all_fusions_table_referral= pandas.read_csv("./Gathered_Results/Database/"+sample+"_fusion_check.csv", sep=",")
+                all_fusions_table_referral=all_fusions_table_referral[all_fusions_table_referral["fusion"].str.contains(gene)]
+
                 splice_fusion_referral=all_fusions_table_referral[(all_fusions_table_referral.type=="Splice")]
                 if ((len(splice_fusion_referral))!=0):
                     splice_fusion_referral['fusion'] = splice_fusion_referral['fusion'].apply(lambda x: x+"-"+x)
                     fusion_referral=all_fusions_table_referral[(all_fusions_table_referral.type=="Fusion")]
                     report_referral=splice_fusion.append(fusion_referral)
                 else:
-                    report_referral=splice_fusion_referral
+                    report_referral=all_fusions_table_referral
 
                 if (len(report_referral)>0):
                     fusion_list_referral1=report_referral["fusion"].tolist()
@@ -201,17 +202,18 @@ for sample in sampleList:
 
         
                     if (sample_number!=0): 
+                        print(sample_previous)
 
 	                # read in fusions file for sample referral and duplicate the gene for splice variants in the fusions column
-                        all_fusions_table_referral_previous= pandas.read_csv("./Gathered_Results/Results/"+sample_previous+"/"+gene+"_fusions.csv", sep=",")
+                        all_fusions_table_referral_previous= pandas.read_csv("./Gathered_Results/Database/"+sample_previous+"_fusion_check.csv", sep=",")
+                        all_fusions_table_referral_previous=all_fusions_table_referral_previous[all_fusions_table_referral_previous["fusion"].str.contains(gene)]
                         splice_fusion_referral_previous=all_fusions_table_referral_previous[(all_fusions_table_referral_previous.type=="Splice")]
                         if ((len(splice_fusion_referral_previous))!=0):
                             splice_fusion_referral_previous['fusion'] = splice_fusion_referral_previous['fusion'].apply(lambda x: x+"-"+x)
                             fusion_referral_previous=all_fusions_table_referral_previous[(all_fusions_table_referral_previous.type=="Fusion")]
                             report_referral_previous=splice_fusion.append(fusion_referral_previous)
                         else:
-                            report_referral_previous=splice_fusion_referral_previous
-
+                            report_referral_previous= all_fusions_table_referral_previous
 
                         if (len(report_referral_previous)>0):
                                 fusion_list_referral_previous1=report_referral_previous["fusion"].tolist()
@@ -236,14 +238,16 @@ for sample in sampleList:
                     if (sample_number<(len_sample_list-1)):              
 
 	                # read in fusions file for sample referral and duplicate the gene for splice variants in the fusions column
-                        all_fusions_table_referral_next= pandas.read_csv("./Gathered_Results/Results/"+sample_next+"/"+gene+"_fusions.csv", sep=",")
+                        all_fusions_table_referral_next= pandas.read_csv("./Gathered_Results/Database/"+sample_next+"_fusion_check.csv", sep=",")
+                        all_fusions_table_referral_next=all_fusions_table_referral_next[all_fusions_table_referral_next["fusion"].str.contains(gene)]
+
                         splice_fusion_referral_next=all_fusions_table_referral_next[(all_fusions_table_referral_next.type=="Splice")]
                         if ((len(splice_fusion_referral_next))!=0):
                             splice_fusion_referral_next['fusion'] = splice_fusion_referral_next['fusion'].apply(lambda x: x+"-"+x)
                             fusion_referral_next=all_fusions_table_referral_next[(all_fusions_table_referral_next.type=="Fusion")]
                             report_referral_next=splice_fusion.append(fusion_referral_next)                
                         else:
-                            report_referral_next=splice_fusion_referral_next
+                            report_referral_next=all_fusions_table_referral_next
 
 
                         if (len(report_referral_next)>0):
