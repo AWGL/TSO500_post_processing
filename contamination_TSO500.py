@@ -32,9 +32,8 @@ tumour_referrals="|".join(gene_list)
 sample_number=0
 
 for sample in sampleList:
-    print(sample)
     NTC_in_sample= ("NTC" in sample.upper())
-
+    print(sample_number)
     if (NTC_in_sample==False):
 
         sample_table=samples_file[samples_file['Sample']==sample]
@@ -202,7 +201,6 @@ for sample in sampleList:
 
         
                     if (sample_number!=0): 
-                        print(sample_previous)
 
 	                # read in fusions file for sample referral and duplicate the gene for splice variants in the fusions column
                         all_fusions_table_referral_previous= pandas.read_csv("./Gathered_Results/Database/"+sample_previous+"_fusion_check.csv", sep=",")
@@ -306,8 +304,8 @@ for sample in sampleList:
                     contamination_dict[sample]="Yes"
                     contamination_referral_dict[sample]="Yes"
  		
-        #Increase the sample_number by 1   
-        sample_number=sample_number+1
+    #Increase the sample_number by 1   
+    sample_number=sample_number+1
 
 
 #Convert the contamination dictionaries to a dataframe and output to a csv file
