@@ -19,3 +19,8 @@ The raw data directory must contain the SampleSheet.csv.
 ## Samplesheet requirements
 * The samplesheet must contain the samples in the correct order for the RNA contamination results to be valid
 * Every NTC must be named NTC-worksheetid 
+
+## Duty scientist responsibilites
+The duty scientist is responsible for the following tasks:
+* Signing off the run in autoqc database - for more information refer to the AutoQC sop
+* Importing the data into the data into the somatic variant database
