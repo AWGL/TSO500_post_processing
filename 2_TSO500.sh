@@ -266,8 +266,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
 
     contamination_score=$(grep CONTAMINATION_SCORE analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
     contamination_p_value=$(grep CONTAMINATION_P_VALUE analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
-    total_pf_reads=$(grep "TOTAL_PF_READS (Count)" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
-    median_insert_size=$(grep "MEDIAN_INSERT_SIZE (bp)" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
+    total_pf_reads=$(grep TOTAL_PF_READS analysis/"$sample_id"/Results/MetricsOutput.tsv | head -n1 | cut -f4)
+    median_insert_size=$(grep MEDIAN_INSERT_SIZE analysis/"$sample_id"/Results/MetricsOutput.tsv | head -n1 | cut -f4)
     median_exon_coverage=$(grep MEDIAN_EXON_COVERAGE analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
     pct_exon_50x=$(grep PCT_EXON_50X analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
 
@@ -295,9 +295,9 @@ fi
 if [ "$dna_or_rna" = "RNA" ]; then
 
     median_cv_gene_500x=$(grep "MEDIAN_CV_GENE_500X" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
-    total_on_target_reads=$(grep "TOTAL_ON_TARGET_READS (Count)" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
-    median_insert_size=$(grep "MEDIAN_INSERT_SIZE (Count)" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
-    total_pf_reads=$(grep "TOTAL_PF_READS (Count)" analysis/"$sample_id"/Results/MetricsOutput.tsv | cut -f4)
+    total_on_target_reads=$(grep "TOTAL_ON_TARGET_READS" analysis/"$sample_id"/Results/MetricsOutput.tsv | tail -n1 | cut -f4)
+    median_insert_size=$(grep "MEDIAN_INSERT_SIZE" analysis/"$sample_id"/Results/MetricsOutput.tsv | tail -n1 | cut -f4)
+    total_pf_reads=$(grep "TOTAL_PF_READS" analysis/"$sample_id"/Results/MetricsOutput.tsv | tail -n1 | cut -f4)
 
 
     # add to sample QC file

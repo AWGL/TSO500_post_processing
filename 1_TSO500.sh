@@ -27,6 +27,8 @@ set -euo pipefail
 
 ln -s /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img .
 
+now=$(date +"%T")
+echo "Start time: $now" > timings.txt
 
 ##############################################################################################
 #  Illumina app
