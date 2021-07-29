@@ -44,7 +44,6 @@ $pipeline_dir/TruSight_Oncology_500_RUO.sh \
 
 
 
-
 ##############################################################################################
 #  Generate inputs for variants database - DNA
 ##############################################################################################
@@ -91,24 +90,22 @@ for worksheet_id in $(cat worksheets_rna.txt); do
 		sample="$(echo "$line" | cut -d, -f1)"
 		worksheet_id=$(echo "$line" | cut -d, -f2)
 
+                if [[ ! -f ./Gathered_Results/Database/"$sample"_fusion_check.csv ]]
+                then
+                echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score"> ./Gathered_Results/Database/"$sample"_fusion_check.csv
+                fi
+
                 python "$pipeline_dir"/fusions_check_with_ntc.py \
                   ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
                   ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+                  ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
                   ./Gathered_Results/Database/
-                  
-                #filter fusions by referral type for contamination script
-                python "$pipeline_dir"/filter_fusions_table.py "$sample" "$version"
-
+                
 	done
 done
 
 
 # TODO - move BAMs into gathered results
-
-
-
-
-
 
 
 ##############################################################################################
@@ -120,7 +117,7 @@ done
 
 #Run contamination script
 for worksheetid in $(cat worksheets_rna.txt); do
-	python contamination_TSO500.py "$worksheetid" "$version"
+	python "$pipeline_dir"/contamination_TSO500.py "$worksheetid" "$version"
 done
 
 # move sample log files into their own folders
@@ -130,3 +127,8 @@ do
     mv "$sample"_2_TSO500*.err analysis/"$sample"
 done
 
+
+
+# add timings
+now=$(date +"%T")
+echo "End time:   $now" >> timings.txt
