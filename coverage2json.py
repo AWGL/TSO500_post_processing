@@ -231,8 +231,8 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 			sample_270_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
 		## parse 270 gaps and add cosmic column
-		elif file == f'{sampleid}_{referral_type}_combined.gaps':
-			sample_270_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = 0, index_col = False)
+		elif file == f'{sampleid}_{referral_type}_hotspots.gaps':
+			sample_270_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = None, index_col = False)
 			sample_270_gaps_df['COSMIC'] = 'N/A'
 
 	## parse 135x
@@ -273,8 +273,8 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 			sample_135_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
 		## parse 135 gaps
-		elif file == f'{sampleid}_{referral_type}_combined.gaps':
-			sample_135_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = 0, index_col = False)
+		elif file == f'{sampleid}_{referral_type}_hotspots.gaps':
+			sample_135_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = None, index_col = False)
 			sample_135_gaps_df['COSMIC'] = 'N/A'
 
 	## join 270 and 135 tables
@@ -291,7 +291,7 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 	return sampleid, sample_gene_df, sample_region_df, sample_135_gaps_df, sample_270_gaps_df
 
 
-def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df):
+def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present):
 	'''
 	- function to collate all dataframes into one nested dictionary to export to JSON format
 	- input: gene list, gene level df, genescreen region df, hotspot region df, 270 gaps df, 135 gaps df
@@ -314,7 +314,8 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 			filtered_genescreen_region_list =[]
 			genescreen_region_list = genescreen_region_df.values.tolist()
 			for item in genescreen_region_list:
-				if key in item[3]:
+				# check if gene is the gene in the 4th column then add
+				if key == item[3].split('(')[0]:
 					filtered_genescreen_region_list.append(item)
 			output_dict[key]['genescreen_regions'] = filtered_genescreen_region_list
 		else:
@@ -324,7 +325,8 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 		filtered_hotspot_region_list = []
 		hotspot_region_list = hotspots_region_df.values.tolist()
 		for item in hotspot_region_list:
-			if key in item[3]:
+			# check if gene is the gene in the 4th column then add
+			if key == item[3].split('(')[0]:
 				filtered_hotspot_region_list.append(item)
 		output_dict[key]['hotspot_regions'] = filtered_hotspot_region_list
 
@@ -333,7 +335,8 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 			filtered_135_gaps_list = []
 			sample_135_gaps_list = sample_135_gaps_df.values.tolist()
 			for item in sample_135_gaps_list:
-				if key in item[3]:
+				# check if gene is the gene in the 4th column then add
+				if key == item[3].split('(')[0]:
 					filtered_135_gaps_list.append(item)
 			output_dict[key]['gaps_135'] = filtered_135_gaps_list
 		else:
@@ -342,7 +345,8 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 			filtered_270_gaps_list = []
 			sample_270_gaps_list = sample_270_gaps_df.values.tolist()
 			for item in sample_270_gaps_list:
-				if key in item[3]:
+				# check if gene is the gene in the 4th column then add
+				if key == item[3].split('(')[0]:
 					filtered_270_gaps_list.append(item)
 			output_dict[key]['gaps_270'] = filtered_270_gaps_list
 		else:
@@ -376,24 +380,13 @@ if __name__ == '__main__':
 
 	### parse referral_type group/bed files
 	gene_list, genescreen_df, hotspots_df, genescreen_present = parse_referral_type_files(args.referral, args.groups_folder)
-	# print(gene_list)
-	# print(genescreen_df)
-	# print(hotspots_df)
-	# print(genescreen_present)
-
 
 	### parse NTC sample 270x for average depth per gene (.totalCoverage) and per region (.coverage)
 	ntc_gene_df, ntc_region_df = parse_NTC_data(args.ntc_coverage, args.referral)
-	# print(ntc_gene_df)
-	# print(ntc_region_df)
 
 
 	### parse sample 135x and 270x files
 	sampleid, sample_gene_df, sample_region_df, sample_135_gaps_df, sample_270_gaps_df = parse_sample_data(args.sample_coverage, args.referral)
-	# print(sample_gene_df)
-	# print(sample_region_df)
-	# print(sample_135_gaps_df)
-	# print(len(sample_135_gaps_df))
 
 
 	### create json pieces
@@ -409,7 +402,6 @@ if __name__ == '__main__':
 	main_region_df['PERC_NTC_DEPTH'] = main_region_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	main_gene_df['PERC_NTC_DEPTH'] = (main_gene_df['NTC_AVG_DEPTH'] / main_gene_df['AVG_DEPTH']) * 100
 	main_gene_df['PERC_NTC_DEPTH'] = main_gene_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-	# print(main_gene_df)
 
 	## seperate main df into hotspot and genescreen if genescreen is present
 	if genescreen_present:
@@ -420,14 +412,11 @@ if __name__ == '__main__':
 		
 		## create genescreen_region_df as nothing to allow for exporting and then importing to create dict
 		genescreen_region_df = ''
-	
-	# print(genescreen_region_df)
-	# print(hotspots_region_df)
 
 
 	### create output dict
-	output_dict = create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df)
-	# print(output_dict)
+	output_dict = create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present)
+
 
 	## export dict to JSON
 	with open(args.outfile,'w') as f:
