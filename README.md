@@ -15,4 +15,4 @@ To run 1_TSO500.sh:
 
 ## Samplesheet requirements
 * The samplesheet must contain the samples in the correct order for the RNA contamination results to be valid
-* Every NTC must be named NTC-<worksheetid> 
+* Every NTC must be named NTC-worksheetid 
