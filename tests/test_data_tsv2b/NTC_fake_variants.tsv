@@ -1,0 +1,43 @@
+TruSight Oncology 500 - Combined Variant Output										
+For Research Use Only. Not for use in diagnostic procedures.										
+										
+[Analysis Details]										
+Pair ID	NTC-DNA-1									
+DNA Sample ID	NTC-DNA-1									
+RNA Sample ID	NA									
+Output Date	2099-99-99									
+Output Time	14:24:32									
+Module Version	NA									
+Pipeline Version	1									
+										
+[Sequencing Run Details]										
+NA										
+										
+[TMB]										
+Total TMB	NA									
+Coding Region Size in Megabases	NA									
+Number of Passing Eligible Variants	NA									
+										
+[MSI]										
+Usable MSI Sites	0									
+Total MSI Sites Unstable	NA									
+Percent Unstable MSI Sites	NA									
+										
+[Gene Amplifications]										
+Gene	Fold Change									
+NA										
+										
+[Splice Variants]										
+Gene	Affected Exon	Breakpoint 1	Breakpoint 2	Splice Supporting Reads	Reference Reads Transcript					
+NA										
+										
+[Fusions]										
+Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads					
+NA										
+										
+[Small Variants]										
+Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
+TNFRSF14	chr1	2489805	G	A	0.0936	87	NP_003811.2:p.(Gly68Arg)	NM_003820.3:c.202G>A	missense_variant	3/8
+MTOR	chr1	11288758	G	A	0.7032	873	NM_004958.3:c.2997C>T(p.(Asn999=))	NM_004958.3:c.2997C>T	synonymous_variant	19/58
+MTOR	chr1	11301744	A	G	0.6751	12	NM_004958.3:c.1437T>C(p.(Asp479=))	NM_004958.3:c.1437T>C	synonymous_variant	10/58
+	chr9	19072413	C	T	0.1033	400				

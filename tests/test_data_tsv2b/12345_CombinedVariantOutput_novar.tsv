@@ -1,0 +1,42 @@
+﻿TruSight Oncology 500 - Combined Variant Output										
+For Research Use Only. Not for use in diagnostic procedures.										
+										
+[Analysis Details]										
+Pair ID	12345									
+DNA Sample ID	12345									
+RNA Sample ID	NA									
+Output Date	2099-99-99									
+Output Time	18:33:23									
+Module Version	NA									
+Pipeline Version	1									
+										
+[Sequencing Run Details]										
+NA										
+										
+[TMB]										
+Total TMB	275.6									
+Coding Region Size in Megabases	1.28									
+Number of Passing Eligible Variants	352									
+										
+[MSI]										
+Usable MSI Sites	125									
+Total MSI Sites Unstable	81									
+Percent Unstable MSI Sites	64.8									
+										
+[Gene Amplifications]										
+Gene	Fold Change									
+MYCN	4.464									
+MET	2.173									
+MYC	4.76									
+										
+[Splice Variants]										
+Gene	Affected Exon	Breakpoint 1	Breakpoint 2	Splice Supporting Reads	Reference Reads Transcript					
+NA										
+										
+[Fusions]										
+Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads					
+NA										
+										
+[Small Variants]										
+Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
+NA
