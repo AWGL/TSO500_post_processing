@@ -83,6 +83,7 @@ done
 ##############################################################################################
 
 
+
 #create fusions table in correct format to import to database
 for worksheet_id in $(cat worksheets_rna.txt); do
 
@@ -90,19 +91,22 @@ for worksheet_id in $(cat worksheets_rna.txt); do
 		sample="$(echo "$line" | cut -d, -f1)"
 		worksheet_id=$(echo "$line" | cut -d, -f2)
 
-                if [[ ! -f ./Gathered_Results/Database/"$sample"_fusion_check.csv ]]
-                then
-                echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score"> ./Gathered_Results/Database/"$sample"_fusion_check.csv
-                fi
+                if [[ ! -f ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv ]]; then
+                    echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score"> ./Gathered_Results/Database/"$sample"_fusion_check.csv
+ 
+                else
 
-                python "$pipeline_dir"/fusions_check_with_ntc.py \
-                  ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
-                  ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
-                  ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
-                  ./Gathered_Results/Database/
+                    python "$pipeline_dir"/fusions_check_with_ntc.py \
+                      ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
+                      ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+                      ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
+                      ./Gathered_Results/Database/
+
+                fi
                 
 	done
 done
+
 
 
 # TODO - move BAMs into gathered results
