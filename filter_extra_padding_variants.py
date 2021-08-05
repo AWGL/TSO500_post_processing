@@ -61,7 +61,7 @@ for var in y['positions']:
 
         # add to variant list
         out_list.append(
-            [gene, chr, pos, ref, alt, str(vaf), str(depth), hgvs_p, hgvs_c, csq, exon, str(alt_reads), '', '', '', '']
+            [gene, chr, pos, ref, alt, str(vaf), str(depth), hgvs_p, hgvs_c, csq, exon, str(alt_reads), 'False', '', '', '']
         )
 
 
