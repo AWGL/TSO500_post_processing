@@ -11,7 +11,13 @@
 # Mode:        BY_SAMPLE
 # Use:         sbatch within run directory
 
-version=2.2.0
+
+app_version=2.2.0
+app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
+
+pipeline_version=master
+pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+
 
 cd "$SLURM_SUBMIT_DIR"
 mkdir Gathered_Results
@@ -22,8 +28,6 @@ module load singularity
 # catch fails early and terminate
 set -euo pipefail
 
-pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"
-
 
 
 ##############################################################################################
@@ -33,9 +37,9 @@ pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp
 samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
 
 # make sure to use singularity flag
-$pipeline_dir/TruSight_Oncology_500_RUO.sh \
+$app_dir/TruSight_Oncology_500_RUO.sh \
   --analysisFolder Gathered_Results \
-  --resourcesFolder $pipeline_dir/resources \
+  --resourcesFolder $app_dir/resources \
   --runFolder $raw_data \
   --isNovaSeq \
   --sampleSheet "$raw_data"/SampleSheet.csv \

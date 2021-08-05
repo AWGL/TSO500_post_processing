@@ -11,7 +11,12 @@
 # Mode:        BY_SAMPLE
 # Use:         sbatch within run directory, pass in raw_data directory and sample_id
 
-version=2.2.0
+
+app_version=2.2.0
+app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
+
+pipeline_version=master
+pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 
 cd "$SLURM_SUBMIT_DIR"
 
@@ -25,8 +30,6 @@ module load anaconda
 
 # catch fails early and terminate
 set -euo pipefail
-
-pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"
 
 minimum_coverage="270 135"
 coverage_bed_files_path="$pipeline_dir"/hotspot_coverage
@@ -45,14 +48,14 @@ referral=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f10 | cut -d";" 
 ##############################################################################################
 
 # use sampleOrPairIDs flag to run one sample at a time
-$pipeline_dir/TruSight_Oncology_500_RUO.sh \
-  --analysisFolder $output_path \
-  --resourcesFolder $pipeline_dir/resources \
+"$app_dir"/TruSight_Oncology_500_RUO.sh \
+  --analysisFolder "$output_path" \
+  --resourcesFolder "$app_dir"/resources \
   --fastqFolder "$SLURM_SUBMIT_DIR"/Demultiplex_Output/Logs_Intermediates/FastqGeneration \
   --isNovaSeq \
   --sampleSheet "$raw_data"/SampleSheet.csv \
   --engine singularity \
-  --sampleOrPairIDs $sample_id
+  --sampleOrPairIDs "$sample_id"
 
 
 
@@ -128,7 +131,7 @@ if [ "$dna_or_rna" = "DNA" ]; then
     gatk DepthOfCoverage \
       -I "$bam_path"/"$sample_id"_add_rg.bam \
       -L "$vendor_capture_bed" \
-      -R "$pipeline_dir"/resources/genomes/hg19_hardPAR/genome.fa \
+      -R "$app_dir"/resources/genomes/hg19_hardPAR/genome.fa \
       -O "$depth_path"/"$sample_id"_depth_of_coverage
 
 
