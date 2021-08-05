@@ -1,20 +1,19 @@
 #!/bin/bash
+# Run parts of illumina app to call variants between +/-2 to +/-5 (outside of usualy TSO500 ROI)
 
-#SBATCH --time=06:00:00
-#SBATCH --output=%j-%N-TSO500_extra_padding.out
-#SBATCH --error=%j-%N-TSO500_extra_padding.err
-#SBATCH --partition=high
-#SBATCH --cpus-per-task=24
+sample_id=$1
 
-# Description: Run parts of illumina app to call variants between +/-2 to +/-5 (outside of usualy TSO500 ROI)
-# Author:      AWMGS
-# Mode:        BY_SAMPLE
-# Use:         sbatch within run directory, pass in sample_id
+app_version=2.2.0
+app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
+resources="$app_dir"/resources/
 
-version=2.2.0
+
+pipeline_version=master
+pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+
+
 
 cd "$SLURM_SUBMIT_DIR"
-
 
 app_logs_intermediates="$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Logs_Intermediates
 output_folder="$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/padding
@@ -30,15 +29,12 @@ module load anaconda
 # catch fails early and terminate
 set -euo pipefail
 
-pipeline_dir=/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"$version"
-resources="$pipeline_dir"/resources/
+
+# define singularity exec command
+SING="singularity exec --bind "$app_logs_intermediates":/mnt/app_result,"$output_folder":/opt/illumina/analysis-folder,"$resources":/opt/illumina/resources "$app_dir"/trusight-oncology-500-ruo.img"
 
 # this is only visible inside singularity container
 extra_roi_bed_file=/opt/illumina/resources/TSO_extra_padding_chr.interval_list
-
-
-# define singularity exec command
-SING="singularity exec --bind "$app_logs_intermediates":/mnt/app_result,"$output_folder":/opt/illumina/analysis-folder,"$resources":/opt/illumina/resources /data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-2.2.0/trusight-oncology-500-ruo.img"
 
 
 # run each section in singularity

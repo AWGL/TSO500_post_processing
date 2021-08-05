@@ -10,7 +10,7 @@
 # Author:      AWMGS
 # Mode:        BY_SAMPLE
 # Use:         sbatch within /Output/fastq/run_id directory
-
+# Version:     1.0.0
 
 app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"

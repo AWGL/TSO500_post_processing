@@ -10,6 +10,7 @@
 # Author:      AWMGS
 # Mode:        BY_SAMPLE
 # Use:         sbatch within run directory
+# Version:     1.0.0
 
 
 app_version=2.2.0

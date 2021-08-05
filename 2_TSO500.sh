@@ -10,6 +10,7 @@
 # Author:      AWMGS
 # Mode:        BY_SAMPLE
 # Use:         sbatch within run directory, pass in raw_data directory and sample_id
+# Version:     1.0.0
 
 
 app_version=2.2.0
@@ -58,6 +59,8 @@ referral=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f10 | cut -d";" 
   --sampleOrPairIDs "$sample_id"
 
 
+# call variants outside of app ROI
+bash "$pipeline_dir"/call_extra_padding_variants.sh "$sample_id"
 
 
 set +u
