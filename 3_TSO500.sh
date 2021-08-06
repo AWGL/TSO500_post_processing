@@ -126,7 +126,7 @@ done
 
 #Run contamination script
 for worksheetid in $(cat worksheets_rna.txt); do
-	python "$pipeline_dir"/contamination_TSO500.py "$worksheetid" "$version"
+	python "$pipeline_dir"/contamination_TSO500.py "$worksheetid" "$pipeline_version"
 done
 
 # move sample log files into their own folders

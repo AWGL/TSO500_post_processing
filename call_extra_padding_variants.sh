@@ -158,7 +158,14 @@ set -u
 cp "$output_folder"/Logs_Intermediates/MergedAnnotation/"$sample_id"/"$sample_id"_MergedVariants_Annotated.json.gz "$output_folder"
 gunzip "$output_folder"/"$sample_id"_MergedVariants_Annotated.json.gz
 
+# format extra variant calls
 python "$pipeline_dir"/filter_extra_padding_variants.py "$output_folder"/"$sample_id"_MergedVariants_Annotated.json > "$output_folder"/"$sample_id"_extra_db.tsv
+
+# TODO concatenate to end of combined output
+
+
+# remove dsdm files to prevent Gathered results failing downstream - it uses a wildcard and they cause it to match too many folders
+rm "$output_folder"/Logs_Intermediates/*/dsdm.json
 
 
 set +u

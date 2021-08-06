@@ -5,8 +5,7 @@ from collections import OrderedDict
 worksheetid=sys.argv[1]
 version=sys.argv[2]
 
-referrals_path="/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"+version+"/RNA_referrals"
-
+referrals_path=f"/data/diagnostics/pipelines/TSO500/TSO500_post_processing-{version}/RNA_referrals"
 
 #need to determine if the samples are RNA or need samples_correct_order_file- with second column for dna or rna
 samples_file = pandas.read_csv("./samples_correct_order_"+worksheetid+"_RNA.csv", sep=",", names=["Sample", "Worksheet", "Type", "Referral"])
@@ -24,7 +23,7 @@ contamination_referral=["No"]*len_sample_list
 contamination_referral_dict=OrderedDict(zip(sampleList, contamination_referral))
 
 #get a list of genes in the tumour referral type to be able to later filter by genes on the panel
-tumour_referral_file=pandas.read_csv("/data/diagnostics/pipelines/TSO500_RUO_LocalApp/TSO500_RUO_LocalApp-"+version+"/RNA_referrals/Tumour.txt", sep="\t")
+tumour_referral_file=pandas.read_csv(f"{referrals_path}/Tumour.txt", sep="\t")
 gene_list=list(tumour_referral_file['Genes'])
 tumour_referrals="|".join(gene_list)
 
@@ -33,7 +32,7 @@ sample_number=0
 
 for sample in sampleList:
     NTC_in_sample= ("NTC" in sample.upper())
-    print(sample_number)
+    #print(sample_number)
     if (NTC_in_sample==False):
 
         sample_table=samples_file[samples_file['Sample']==sample]

@@ -59,10 +59,6 @@ referral=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f10 | cut -d";" 
   --sampleOrPairIDs "$sample_id"
 
 
-# call variants outside of app ROI
-bash "$pipeline_dir"/call_extra_padding_variants.sh "$sample_id"
-
-
 set +u
 conda activate TSO500_post_processing
 set -u
@@ -106,6 +102,12 @@ done
 
 if [ "$dna_or_rna" = "DNA" ]; then
 
+
+    # call variants outside of app ROI
+    bash "$pipeline_dir"/call_extra_padding_variants.sh "$sample_id"
+
+
+    # depth of coverage
     bam_path="$output_path"/Logs_Intermediates/StitchedRealigned/"$sample_id"/
 
     depth_path="$output_path"/depth_of_coverage
