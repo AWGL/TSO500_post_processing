@@ -7,6 +7,7 @@ import sys
 import csv
 import pandas as pd
 import yaml
+import numpy as np
 
 
 def load_report(fusions_file):
@@ -79,6 +80,10 @@ def add_extra_columns(df_final, df_extra):
     df_merged = pd.merge(left=df_final, right=df_extra_cut, left_on=['left_breakpoint', 'right_breakpoint'], right_on=['Gene A Breakpoint', 'Gene B Breakpoint'], how='left')
     df_merged = df_merged.drop(['Gene A Breakpoint', 'Gene B Breakpoint'], axis=1)
     df_merged_final = df_merged.rename(columns={'Alt Pair': 'spanning_reads', 'Alt Pair Dedup': 'spanning_reads_dedup', 'Alt Split': 'split_reads', 'Alt Split Dedup': 'split_reads_dedup', 'Caller': 'fusion_caller', 'Score': 'fusion_score'})
+
+    cols = ['spanning_reads', 'spanning_reads_dedup', 'split_reads', 'split_reads_dedup']
+    df_merged_final[cols] = df_merged_final[cols].fillna(0.0).astype(int)
+
     return df_merged_final
 
 
