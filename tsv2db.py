@@ -37,20 +37,16 @@ def parse_ntc_tsv(ntcfile):
 				pass
 
 		else:
-
 			## treat first line differently as it is a header line
 			if rowcounter == 0:
 				rowcounter += 1
 
 			else:
-				if tsv_line.strip() == 'NA':
-					ntc_var_list.append('NA')
-					break
-
-				else:
-					var_id = tsv_line.split('\t')[0:7]
+				tsv_line_list = tsv_line.rstrip().split('\t')
+				if len(tsv_line_list) > 6:				
+					var_id = tsv_line_list[0:7]
 					ntc_var_list.append(var_id)
-
+				
 	tsv.close()
 
 	return ntc_var_list
@@ -89,7 +85,7 @@ def parse_sample_tsv(tsvfile, ntcvarlist):
 
 				## parse small variants data
 				tsv_line1 = tsv_line.replace('\n','')
-				tsv_line_list = tsv_line1.split('\t')
+				tsv_line_list = tsv_line1.rstrip().split('\t')
 
 				## check if variant is in NTC file
 				var_id_list = tsv_line_list[0:5]
@@ -149,7 +145,6 @@ if __name__ == '__main__':
 
 	### parse NTC file
 	ntc_var_list = parse_ntc_tsv(args.ntcfile)
-	print(ntc_var_list)
 
 	### parse sample file
 	var_list = parse_sample_tsv(args.tsvfile, ntc_var_list)

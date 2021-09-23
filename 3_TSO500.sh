@@ -25,6 +25,7 @@ mkdir Gathered_Results
 
 module purge
 module load singularity
+module load samtools
 
 # catch fails early and terminate
 set -euo pipefail
@@ -54,6 +55,7 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 ##############################################################################################
 
 mkdir Gathered_Results/Database
+mkdir BAMs
 
 #Create variants and coverage tables in correct format to import to database
 for worksheet_id in $(cat worksheets_dna.txt); do
@@ -64,8 +66,8 @@ for worksheet_id in $(cat worksheets_dna.txt); do
 		referral=$(echo "$line" | cut -d, -f4)
 
 		python "$pipeline_dir"/tsv2db.py \
-                  --tsvfile ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
-                  --ntcfile ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+                  --tsvfile analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput_padding.tsv \
+                  --ntcfile analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput_padding.tsv \
                   --outfile ./Gathered_Results/Database/"$sample"_variants.tsv
 
 
@@ -78,6 +80,23 @@ for worksheet_id in $(cat worksheets_dna.txt); do
                       --ntc_coverage analysis/NTC-"$worksheet_id"/depth_of_coverage/ \
                       --outfile ./Gathered_Results/Database/"$sample"_"$referral"_coverage.json
                 fi
+
+                # copy BAMs to main folder
+                cp analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam BAMs
+                cp analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam.bai BAMs
+
+                # combined DNA QC files
+                if [[ ! -f DNA_QC_combined.txt ]]; then
+                    cat analysis/"$sample"/"$sample"_DNA_QC.txt > DNA_QC_combined.txt
+                else
+                    cat analysis/"$sample"/"$sample"_DNA_QC.txt | tail -n1 >> DNA_QC_combined.txt
+                fi
+
+                # make database upload sample list
+                if [[ "$sample" != NTC* ]]; then
+                    echo "$line" >> Gathered_Results/Database/samples_database_"$worksheet_id"_DNA.csv
+                fi
+
 	done
 done
 
@@ -92,9 +111,13 @@ done
 #create fusions table in correct format to import to database
 for worksheet_id in $(cat worksheets_rna.txt); do
 
+        ntc_reads=$(samtools view -F4 -c analysis/NTC-"$worksheet_id"/Logs_Intermediates/RnaMarkDuplicates/NTC-"$worksheet_id"/NTC-"$worksheet_id".bam)
+
 	for line in $(cat samples_correct_order_"$worksheet_id"_RNA.csv); do
 		sample="$(echo "$line" | cut -d, -f1)"
 		worksheet_id=$(echo "$line" | cut -d, -f2)
+                referral=$(echo "$line" | cut -d, -f4)
+                sample_reads=$(tail -n1 analysis/"$sample"/"$sample"_RNA_QC.txt | cut -f5)
 
                 if [[ ! -f ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv ]]; then
                     echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score"> ./Gathered_Results/Database/"$sample"_fusion_check.csv
@@ -108,21 +131,32 @@ for worksheet_id in $(cat worksheets_rna.txt); do
                       ./Gathered_Results/Database/
 
                 fi
+
+                # copy BAMs
+                cp analysis/"$sample"/Logs_Intermediates/RnaMarkDuplicates/"$sample"/"$sample".bam BAMs
+                cp analysis/"$sample"/Logs_Intermediates/RnaMarkDuplicates/"$sample"/"$sample".bam.bai BAMs
                 
+                # combined RNA QC files
+                if [[ ! -f RNA_QC_combined.txt ]]; then
+                    cat analysis/"$sample"/"$sample"_RNA_QC.txt > RNA_QC_combined.txt
+                else
+                    cat analysis/"$sample"/"$sample"_RNA_QC.txt | tail -n1 >> RNA_QC_combined.txt
+                fi
+
+                # make database upload sample list
+                if [[ "$sample" != NTC* ]]; then
+                    echo "$sample","$worksheet_id",RNA,"$referral","$sample_reads","$ntc_reads" >> Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
+                fi
 	done
 done
 
 
-
-# TODO - move BAMs into gathered results
 
 
 ##############################################################################################
 #  QC
 ##############################################################################################
 
-# compileQC report
-# TODO concatenate all *_QC.txt files for DNA and RNA
 
 #Run contamination script
 for worksheetid in $(cat worksheets_rna.txt); do

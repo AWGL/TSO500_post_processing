@@ -162,7 +162,8 @@ gunzip "$output_folder"/"$sample_id"_MergedVariants_Annotated.json.gz
 python "$pipeline_dir"/filter_extra_padding_variants.py "$output_folder"/"$sample_id"_MergedVariants_Annotated.json > "$output_folder"/"$sample_id"_extra_db.tsv
 
 # TODO concatenate to end of combined output
-
+cat "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput.tsv > "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput_padding.tsv
+cat "$output_folder"/"$sample_id"_extra_db.tsv >> "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput_padding.tsv
 
 # remove dsdm files to prevent Gathered results failing downstream - it uses a wildcard and they cause it to match too many folders
 rm "$output_folder"/Logs_Intermediates/*/dsdm.json
