@@ -1,0 +1,8 @@
+FEATURE	AVG_DEPTH	PERC_COVERAGE@270
+sample_Melanoma_combined_NRAS_GENE	812.0	100.0
+sample_Melanoma_combined_PTEN_GENE	510.0	90.4
+sample_Melanoma_combined_TP53_GENE	755.0	99.7
+sample_Melanoma_combined_KIT_GENE	647.0	100.0
+sample_Melanoma_combined_BRAF_GENE	883.0	100.0
+sample_Melanoma_combined_CDKN2A_GENE	626.0	100.0
+sample_Melanoma_combined	655.0	97.0

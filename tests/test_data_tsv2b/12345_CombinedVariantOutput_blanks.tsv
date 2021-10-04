@@ -1,0 +1,78 @@
+﻿TruSight Oncology 500 - Combined Variant Output										
+For Research Use Only. Not for use in diagnostic procedures.										
+										
+[Analysis Details]										
+Pair ID	12345									
+DNA Sample ID	12345									
+RNA Sample ID	NA									
+Output Date	2099-99-99									
+Output Time	18:33:23									
+Module Version	NA									
+Pipeline Version	1									
+										
+[Sequencing Run Details]										
+NA										
+										
+[TMB]										
+Total TMB	275.6									
+Coding Region Size in Megabases	1.28									
+Number of Passing Eligible Variants	352									
+										
+[MSI]										
+Usable MSI Sites	125									
+Total MSI Sites Unstable	81									
+Percent Unstable MSI Sites	64.8									
+										
+[Gene Amplifications]										
+Gene	Fold Change									
+MYCN	4.464									
+MET	2.173									
+MYC	4.76									
+										
+[Splice Variants]										
+Gene	Affected Exon	Breakpoint 1	Breakpoint 2	Splice Supporting Reads	Reference Reads Transcript					
+NA										
+										
+[Fusions]										
+Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads					
+NA										
+										
+[Small Variants]										
+Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
+TNFRSF14	chr1	2488153	A	G	0.3967	910	NP_003811.2:p.(Lys17Arg)	NM_003820.3:c.50A>G	missense_variant	1/8
+TNFRSF14	chr1	2489805	G	A	0.0936	1240	NP_003811.2:p.(Gly68Arg)	NM_003820.3:c.202G>A	missense_variant	3/8
+MTOR	chr1	11174511	C	A	0.0467	899		NM_004958.3:c.7165-1G>T	splice_acceptor_variant	
+MTOR	chr1	11288758	G	A	0.7032	1388	NM_004958.3:c.2997C>T(p.(Asn999=))	NM_004958.3:c.2997C>T	synonymous_variant	19/58
+MTOR	chr1	11301714	A	G	0.6751	1225	NM_004958.3:c.1437T>C(p.(Asp479=))	NM_004958.3:c.1437T>C	synonymous_variant	10/58
+SPEN	chr1	16255108	A	G	0.0996	1185	NM_015001.2:c.2373A>G(p.(Thr791=))	NM_015001.2:c.2373A>G	synonymous_variant	11/15
+SPEN	chr1	16255644	C	T	0.2316	1321	NP_055816.2:p.(Ala970Val)	NM_015001.2:c.2909C>T	missense_variant	11/15
+	chr9	19072413	C	T	0.1033	1404				
+FGF14	chr13	102382362	C	A	0.429	1112		NM_175929.2:c.424-3202G>T	intron_variant	
+FGF14	chr13	102589909	C	T	0.1469	1055		NM_175929.2:c.209-62263G>A	intron_variant	
+ERCC5	chr13	103528002	G	C	0.3986	1119	NP_000114.2:p.(Asp1104His)	NM_000123.3:c.3310G>C	missense_variant	15/15
+IRS2	chr13	110435914	G	A	0.0518	791	NM_003749.2:c.2487C>T(p.(Pro829=))	NM_003749.2:c.2487C>T	synonymous_variant	1/2
+IRS2	chr13	110435953	A	G	0.6511	963	NM_003749.2:c.2448T>C(p.(Cys816=))	NM_003749.2:c.2448T>C	synonymous_variant	1/2
+IRS2	chr13	110436232	G	A	0.6667	402	NM_003749.2:c.2169C>T(p.(Ser723=))	NM_003749.2:c.2169C>T	synonymous_variant	1/2
+NFKBIA	chr14	35872926	G	A	0.0311	1352	NM_020529.2:c.306C>T(p.(Ala102=))	NM_020529.2:c.306C>T	synonymous_variant	2/6
+NFKBIA	chr14	35873770	G	A	0.1058	1106	NM_020529.2:c.81C>T(p.(Asp27=))	NM_020529.2:c.81C>T	synonymous_variant	1/6
+NKX2-1	chr14	36986656	C	A	0.1068	103	NP_001073136.1:p.(Ala345Ser)	NM_001079668.2:c.1033G>T	missense_variant	3/3
+NKX2-1	chr14	36991098	C	G	0.0682	1525			upstream_gene_variant	
+FGF7	chr15	49756480	G	T	0.1051	1151		NM_002009.3:c.287-18868G>T	intron_variant	
+MAPK3	chr16	30134375	C	T	0.0325	738	NM_002746.2:c.156G>A(p.(Ala52=))	NM_002746.2:c.156G>A	synonymous_variant	1/9
+PRSS8	chr16	31144657	G	A	0.0993	1359	NM_002773.3:c.156C>T(p.(Val52=))	NM_002773.3:c.156C>T	synonymous_variant	3/6
+CYLD	chr16	50827518	C	T	0.1381	1072	NM_015247.2:c.2412C>T(p.(Asp804=))	NM_015247.2:c.2412C>T	synonymous_variant	18/20
+AKT2	chr19	40736295	G	T	0.0366	1258		NM_001626.5:c.*3484C>A	3_prime_UTR_variant	14/14
+AKT2	chr19	40737242	T	C	1	1390		NM_001626.5:c.*2537=	3_prime_UTR_variant	14/14
+ARFRP1	chr20	62331839	C	T	0.0409	1198	NP_003215.1:p.(Val188Met)	NM_003224.5:c.562G>A	missense_variant	8/8
+ARFRP1	chr20	62331989	T	G	0.2329	1065	NM_003224.5:c.483A>C(p.(Arg161=))	NM_003224.5:c.483A>C	synonymous_variant	7/8
+ARFRP1	chr20	62333536	T	C	0.0739	1353	NP_003215.1:p.(Ile100Val)	NM_003224.5:c.298A>G	missense_variant	5/8
+EP300	chr22	41566447	G	T	0.0645	1024	NP_001420.2:p.(Glu1442Ter)	NM_001429.3:c.4324G>T	stop_gained	27/31
+EP300	chr22	41566524	CA	C	0.1877	554	NP_001420.2:p.(Met1470CysfsTer26)	NM_001429.3:c.4408del	frameshift_variant	27/31
+EP300	chr22	41568524	G	A	0.046	630	NP_001420.2:p.(Glu1492Lys)	NM_001429.3:c.4474G>A	missense_variant	28/31
+EP300	chr22	41568531	G	A	0.0433	693	NP_001420.2:p.(Arg1494Lys)	NM_001429.3:c.4481G>A	missense_variant	28/31
+KDM6A	chrX	44929077	C	A	0.1299	1032	NP_001278344.1:p.(Thr778Lys)	NM_001291415.1:c.2333C>A	missense_variant	18/30
+KDM6A	chrX	44938563	G	A	0.4155	722	NM_001291415.1:c.3267G>A(p.(Gln1089=))	NM_001291415.1:c.3267G>A	synonymous_variant	21/30
+RBM10	chrX	47041246	G	A	0.0541	1073	NM_001204468.1:c.1869G>A(p.(Gln623=))	NM_001204468.1:c.1869G>A	synonymous_variant	15/24
+RBM10	chrX	47045888	C	T	0.0687	728	NP_001191397.1:p.(Arg960Trp)	NM_001204468.1:c.2878C>T	missense_variant	24/24
+		
+	
