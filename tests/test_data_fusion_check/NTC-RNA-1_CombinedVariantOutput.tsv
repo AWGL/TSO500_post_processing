@@ -42,7 +42,7 @@ NA
 		
 [Fusions]		
 Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads
-NA		
+TPM3-NTRK1	chr1:154142876	chr1:156844361	159	0	2
 		
 [Small Variants]		
 Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
