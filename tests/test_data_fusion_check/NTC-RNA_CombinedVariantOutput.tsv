@@ -1,0 +1,50 @@
+TruSight Oncology 500 - Combined Variant Output		
+For Research Use Only. Not for use in diagnostic procedures.		
+		
+[Analysis Details]		
+Pair ID	NTC-RNA-1	
+DNA Sample ID	NA	
+RNA Sample ID	NTC-RNA-1	
+Output Date	2021-02-24	
+Output Time	09:46:53	
+Module Version	NA	
+Pipeline Version	ruo-2.2.0.12	
+		
+[Sequencing Run Details]		
+Run Name	210219_A00748_0082_AHT3KKDMXX	
+Run Date	2021-02-19	
+DNA Sample Index ID	NA	
+RNA Sample Index ID	UDP0143	
+Instrument ID	A00748	
+Instrument Control Software Version	1.7.0	
+Instrument Type	NovaSeq6000	
+RTA Version	v3.4.4	
+SBS Reagent Cartridge Lot Number	20486192	
+Cluster Reagent Cartridge Lot Number	20487349	
+		
+[TMB]		
+Total TMB	NA	
+Coding Region Size in Megabases	NA	
+Number of Passing Eligible Variants	NA	
+		
+[MSI]		
+Usable MSI Sites	NA	
+Total MSI Sites Unstable	NA	
+Percent Unstable MSI Sites	NA	
+		
+[Gene Amplifications]		
+Gene	Fold Change	
+NA		
+		
+[Splice Variants]		
+Gene	Affected Exon	Breakpoint 1	Breakpoint 2	Splice Supporting Reads	Reference Reads Transcript
+NA		
+		
+[Fusions]		
+Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads
+TPM3-NTRK1	chr1:154142876	chr1:156844361	159	0	2
+		
+[Small Variants]		
+Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
+NA		
+		

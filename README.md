@@ -26,3 +26,17 @@ The duty scientist is responsible for the following tasks:
 ## Samplesheet requirements
 * The samplesheet must contain the samples in the correct order for the RNA contamination results to be valid
 * Every NTC must be named NTC-worksheetid
+
+
+
+## Unit tests
+
+Unit tests have been created against the following scripts: `tsv2db.py`, `coverage2json.py`, `fusion_check_with_ntc.py`.
+
+To run all unit tests:
+- copy these scripts into the `tests/` folder (relative imports not currently working, will be fixed in future version)
+- activate the `TSO500_post_processing` conda environment
+- change into tests directory: `cd tests/`
+- run `python -m unittest`
+
+To run tests on a specific script, follow the steps above but run `python -m unittest <test_script_name>`

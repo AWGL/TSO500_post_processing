@@ -4,9 +4,10 @@ channels:
   - bioconda
   - defaults
 dependencies:
-
+  - python=3.8.3
+  - pandas=1.0.5
+  - numpy=1.18.5
   - bzip2=1.0.8
   - gatk4=4.2.0.0
   - samtools=1.7
   - tabix=0.2.6
-
