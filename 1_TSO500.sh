@@ -67,6 +67,8 @@ python "$pipeline_dir"/filter_sample_list.py
 # make an empty file for recording completed samples 
 > completed_samples.txt
 
+# Create read counts bar chart
+python /data/diagnostics/scripts/read_count_visualisation.py
 
 ##############################################################################################
 #  Kick off script 2
