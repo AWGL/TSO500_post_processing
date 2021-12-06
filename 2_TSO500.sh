@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --time=06:00:00
+#SBATCH --time=24:00:00
 #SBATCH --output=%j-%N-2_TSO500.out
 #SBATCH --error=%j-%N-2_TSO500.err
 #SBATCH --partition=high

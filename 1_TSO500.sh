@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH --time=06:00:00
 #SBATCH --output=Demultiplex_Output-%j-%N.out
 #SBATCH --error=Demultiplex_Output-%j-%N.err
 #SBATCH --partition=demultiplexing
