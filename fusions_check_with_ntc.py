@@ -13,7 +13,6 @@
 import sys
 import csv
 import pandas as pd
-import yaml
 import numpy as np
 import argparse
 
