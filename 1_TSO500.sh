@@ -79,8 +79,19 @@ sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.cs
 # make a list of samples and get correct order of samples for each worksheet
 python "$pipeline_scripts"/filter_sample_list.py
 
-# create read counts bar chart
+# create read counts bar chart - runs within it's own conda env
+set +u
+conda deactivate
+conda activate read_count
+set -u
+
 python /data/diagnostics/scripts/read_count_visualisation.py
+
+# reactivate main conda env
+set +u
+conda deactivate
+conda activate TSO500_post_processing
+set -u
 
 # make an empty file for recording completed samples 
 > completed_samples.txt
