@@ -9,6 +9,6 @@ dependencies:
   - numpy=1.18.5
   - bzip2=1.0.8
   - gatk4=4.2.0.0
-  - samtools=1.7
+  - samtools=1.10
   - tabix=0.2.6
   - fastqc=0.11.9
