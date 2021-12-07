@@ -22,6 +22,7 @@ app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$ap
 # define filepaths for post processing
 pipeline_version=development
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+pipeline_scripts="$pipeline_dir"/scripts
 
 # setup analysis folders
 cd $SLURM_SUBMIT_DIR
@@ -76,7 +77,7 @@ cp "$raw_data"/SampleSheet.csv .
 sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
 
 # make a list of samples and get correct order of samples for each worksheet
-python "$pipeline_dir"/filter_sample_list.py
+python "$pipeline_scripts"/filter_sample_list.py
 
 # create read counts bar chart
 python /data/diagnostics/scripts/read_count_visualisation.py

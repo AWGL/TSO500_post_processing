@@ -2,14 +2,14 @@ import unittest
 import pathlib as pl
 import pandas as pd
 
-from fusions_check_with_ntc import load_report, remove_unwanted_line, format_fusions, add_extra_columns
+from fusions2db import load_report, remove_unwanted_line, format_fusions, add_extra_columns
 
 
 """
 
 Test usage:
 
-type 'python -m unittest tests/test_fusion_check.py' from within the directory that contains the fusions_check_with_ntc.py 
+type 'python -m unittest tests/test_fusion_check.py' from within the directory that contains the fusions2db.py 
 
 """
 

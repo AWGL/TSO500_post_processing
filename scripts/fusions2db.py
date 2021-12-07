@@ -3,7 +3,7 @@ This script loads in the sample combined variant output, the NTC combined varian
 Taking the above files, the script will parse these files in pandas and creates a table that compares the sample to the NTC file
 and returns True if the fusion is also found in the NTC.
 
-To run this script you need 4 inputs: './fusions_check_with_ntc.py $tsv_file $ntc_file $all_fusions $output_folder'
+To run this script you need 4 inputs: './fusions2db.py $tsv_file $ntc_file $all_fusions $output_folder'
 
 """
 

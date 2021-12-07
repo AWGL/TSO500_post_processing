@@ -24,6 +24,7 @@ app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$ap
 # define filepaths for post processing
 pipeline_version=development
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+pipeline_scripts="$pipeline_dir"/scripts
 
 # setup analysis folders
 cd "$SLURM_SUBMIT_DIR"
@@ -45,7 +46,7 @@ set -euo pipefail
 #  Illumina app
 ##############################################################################################
 
-samples_to_gather=$(python $pipeline_dir/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
+samples_to_gather=$(python $pipeline_scripts/gather_list.py $SLURM_SUBMIT_DIR/sample_list.txt $SLURM_SUBMIT_DIR)
 
 # make sure to use singularity flag
 $app_dir/TruSight_Oncology_500_RUO.sh \
@@ -78,14 +79,14 @@ for worksheet_id in $(cat worksheets_dna.txt); do
         referral=$(echo "$line" | cut -d, -f4)
 
         # format variants ready for database upload
-        python "$pipeline_dir"/tsv2db.py \
+        python "$pipeline_scripts"/tsv2db.py \
           --tsvfile analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput_padding.tsv \
           --ntcfile analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput_padding.tsv \
           --outfile ./Gathered_Results/Database/"$sample"_variants.tsv
 
         # run coverage scripts for database upload
         if [[ "$referral" != "null" ]]; then
-            python "$pipeline_dir"/coverage2json.py \
+            python "$pipeline_scripts"/coverage2json.py \
               --referral "$referral" \
               --groups_folder "$pipeline_dir"/hotspot_coverage/ \
               --sample_coverage analysis/"$sample"/depth_of_coverage/ \
@@ -136,11 +137,11 @@ for worksheet_id in $(cat worksheets_rna.txt); do
 
         # if app completes properly, format fusions for database upload
         else
-            python "$pipeline_dir"/fusions_check_with_ntc.py \
-              ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
-              ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
-              ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
-              ./Gathered_Results/Database/
+            python "$pipeline_scripts"/fusions2db.py \
+              --tsvfile ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
+              --ntcfile ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+              --allfusions ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
+              --outfile ./Gathered_Results/Database/
         fi
 
         # copy BAMs
@@ -168,7 +169,7 @@ done
 
 # run contamination script for RNA
 for worksheet_id in $(cat worksheets_rna.txt); do
-    python "$pipeline_dir"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
+    python "$pipeline_scripts"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
 done
 
 # move sample log files into their own folders

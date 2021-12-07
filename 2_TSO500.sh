@@ -25,6 +25,7 @@ app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$ap
 # define filepaths for post processing
 pipeline_version=development
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+pipeline_scripts="$pipeline_dir"/scripts
 
 # setup analysis folders
 cd "$SLURM_SUBMIT_DIR"
@@ -111,7 +112,7 @@ if [ "$dna_or_rna" = "DNA" ]; then
     #  Call variants outside of app ROI
     #-------------------------------------------------------------------------------------
 
-    bash "$pipeline_dir"/call_extra_padding_variants.sh "$sample_id"
+    bash "$pipeline_scripts"/call_extra_padding_variants.sh "$sample_id"
 
 
     #-------------------------------------------------------------------------------------

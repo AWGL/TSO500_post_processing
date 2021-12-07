@@ -18,6 +18,7 @@ app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$ap
 # define filepaths for post processing
 pipeline_version=master
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
+pipeline_scripts="$pipeline_dir"/scripts
 
 cd "$SLURM_SUBMIT_DIR"
 
@@ -169,7 +170,7 @@ cp "$output_folder"/Logs_Intermediates/MergedAnnotation/"$sample_id"/"$sample_id
 gunzip "$output_folder"/"$sample_id"_MergedVariants_Annotated.json.gz
 
 # format extra variant calls with custom Python script
-python "$pipeline_dir"/filter_extra_padding_variants.py "$output_folder"/"$sample_id"_MergedVariants_Annotated.json > "$output_folder"/"$sample_id"_extra_db.tsv
+python "$pipeline_scripts"/filter_extra_padding_variants.py "$output_folder"/"$sample_id"_MergedVariants_Annotated.json > "$output_folder"/"$sample_id"_extra_db.tsv
 
 # concatenate extra calls to end of combined output
 cat "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput.tsv > "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput_padding.tsv
