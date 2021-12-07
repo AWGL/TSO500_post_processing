@@ -82,7 +82,12 @@ for worksheet_id in $(cat worksheets_dna.txt); do
         python "$pipeline_scripts"/tsv2db.py \
           --tsvfile analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput_padding.tsv \
           --ntcfile analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput_padding.tsv \
-          --outfile ./Gathered_Results/Database/"$sample"_variants.tsv
+          --outfile ./Gathered_Results/Database/"$sample"_variants_temp.tsv
+
+        # remove any variants called in duplicate (due to re-calling variants beween +/- 2 to 5bp of exons), use head and tail to handle the header
+        head -n1 ./Gathered_Results/Database/"$sample"_variants_temp.tsv > ./Gathered_Results/Database/"$sample"_variants.tsv
+        tail -n +2 ./Gathered_Results/Database/"$sample"_variants_temp.tsv | sort | uniq >> ./Gathered_Results/Database/"$sample"_variants.tsv
+        rm ./Gathered_Results/Database/"$sample"_variants_temp.tsv
 
         # run coverage scripts for database upload
         if [[ "$referral" != "null" ]]; then
