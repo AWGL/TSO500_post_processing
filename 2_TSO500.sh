@@ -170,13 +170,13 @@ if [ "$dna_or_rna" = "DNA" ]; then
             name=$(echo $(basename $bed_file) | cut -d"." -f1)
 
             python /data/diagnostics/apps/CoverageCalculatorPy/CoverageCalculatorPy-v1.1.0/CoverageCalculatorPy.py \
-                -B "$coverage_bed_files_path"/"$name".bed \
-                -D "$depth_path"/"$sample_id"_depth_of_coverage.gz \
-                --depth "$min_coverage" \
-                --padding 0 \
-                --groupfile "$coverage_bed_files_path"/"$name".groups \
-                --outname "$sample_id"_"$name" \
-                --outdir  "$depth_path"/"$hscov_outdir"/
+              -B "$coverage_bed_files_path"/"$name".bed \
+              -D "$depth_path"/"$sample_id"_depth_of_coverage.gz \
+              --depth "$min_coverage" \
+              --padding 0 \
+              --groupfile "$coverage_bed_files_path"/"$name".groups \
+              --outname "$sample_id"_"$name" \
+              --outdir  "$depth_path"/"$hscov_outdir"/
 
 
             # remove header from gaps file

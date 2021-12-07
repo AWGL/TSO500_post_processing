@@ -65,27 +65,27 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 # create variants and coverage tables in correct format to import to database
 for worksheet_id in $(cat worksheets_dna.txt); do
 
-	for line in $(cat samples_correct_order_"$worksheet_id"_DNA.csv); do
+    for line in $(cat samples_correct_order_"$worksheet_id"_DNA.csv); do
         echo $line
 
-		sample="$(echo "$line" | cut -d, -f1)"
-		worksheet_id=$(echo "$line" | cut -d, -f2)
-		referral=$(echo "$line" | cut -d, -f4)
+        sample="$(echo "$line" | cut -d, -f1)"
+        worksheet_id=$(echo "$line" | cut -d, -f2)
+        referral=$(echo "$line" | cut -d, -f4)
 
         # format variants ready for database upload
-		python "$pipeline_dir"/tsv2db.py \
-            --tsvfile analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput_padding.tsv \
-            --ntcfile analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput_padding.tsv \
-            --outfile ./Gathered_Results/Database/"$sample"_variants.tsv
+        python "$pipeline_dir"/tsv2db.py \
+          --tsvfile analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput_padding.tsv \
+          --ntcfile analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput_padding.tsv \
+          --outfile ./Gathered_Results/Database/"$sample"_variants.tsv
 
         # run coverage scripts for database upload
         if [[ "$referral" != "null" ]]; then
-		    python "$pipeline_dir"/coverage2json.py \
-                --referral "$referral" \
-                --groups_folder "$pipeline_dir"/hotspot_coverage/ \
-                --sample_coverage analysis/"$sample"/depth_of_coverage/ \
-                --ntc_coverage analysis/NTC-"$worksheet_id"/depth_of_coverage/ \
-                --outfile ./Gathered_Results/Database/"$sample"_"$referral"_coverage.json
+            python "$pipeline_dir"/coverage2json.py \
+              --referral "$referral" \
+              --groups_folder "$pipeline_dir"/hotspot_coverage/ \
+              --sample_coverage analysis/"$sample"/depth_of_coverage/ \
+              --ntc_coverage analysis/NTC-"$worksheet_id"/depth_of_coverage/ \
+              --outfile ./Gathered_Results/Database/"$sample"_"$referral"_coverage.json
         fi
 
         # copy BAMs to main folder
@@ -104,7 +104,7 @@ for worksheet_id in $(cat worksheets_dna.txt); do
             echo "$line" >> Gathered_Results/Database/samples_database_"$worksheet_id"_DNA.csv
         fi
 
-	done
+    done
 done
 
 
@@ -119,9 +119,9 @@ for worksheet_id in $(cat worksheets_rna.txt); do
     # pull out NTC read count
     ntc_reads=$(samtools view -F4 -c analysis/NTC-"$worksheet_id"/Logs_Intermediates/RnaMarkDuplicates/NTC-"$worksheet_id"/NTC-"$worksheet_id".bam)
 
-	for line in $(cat samples_correct_order_"$worksheet_id"_RNA.csv); do
-		sample="$(echo "$line" | cut -d, -f1)"
-		worksheet_id=$(echo "$line" | cut -d, -f2)
+    for line in $(cat samples_correct_order_"$worksheet_id"_RNA.csv); do
+        sample="$(echo "$line" | cut -d, -f1)"
+        worksheet_id=$(echo "$line" | cut -d, -f2)
         referral=$(echo "$line" | cut -d, -f4)
         sample_reads=$(tail -n1 analysis/"$sample"/"$sample"_RNA_QC.txt | cut -f5)
 
@@ -132,10 +132,10 @@ for worksheet_id in $(cat worksheets_rna.txt); do
         # if app completes properly, format fusions for database upload
         else
             python "$pipeline_dir"/fusions_check_with_ntc.py \
-                ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
-                ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
-                ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
-                ./Gathered_Results/Database/
+              ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
+              ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+              ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
+              ./Gathered_Results/Database/
         fi
 
         # copy BAMs
@@ -163,7 +163,7 @@ done
 
 # run contamination script for RNA
 for worksheet_id in $(cat worksheets_rna.txt); do
-	python "$pipeline_dir"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
+    python "$pipeline_dir"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
 done
 
 # move sample log files into their own folders
