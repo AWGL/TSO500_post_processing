@@ -6,10 +6,11 @@
 #SBATCH --partition=high
 #SBATCH --cpus-per-task=24
 
-# Description: Run Illumina TSO500 app
-# Author:      AWMGS
-# Mode:        BY_SAMPLE
-# Use:         sbatch within run directory, pass in raw_data directory and sample_id
+# Description: Run Illumina TSO500 app for each sample then run postprocessing steps - FastQC, 
+#              GATK depth of coverage, coverage calculator, bed2hgvs, gather QC metrics. Kick
+#              off script 3 when all samples completed
+# Use:         from /Output/results/<run_id> directory, for each sample run: 
+#              sbatch --export=raw_data=/data/archive/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
 # Version:     1.0.2
 
 
@@ -100,17 +101,25 @@ done
 
 
 ##############################################################################################
-#  Depth of coverage
+#  DNA only steps
 ##############################################################################################
 
 if [ "$dna_or_rna" = "DNA" ]; then
 
-    # call variants outside of app ROI
+
+    #-------------------------------------------------------------------------------------
+    #  Call variants outside of app ROI
+    #-------------------------------------------------------------------------------------
+
     bash "$pipeline_dir"/call_extra_padding_variants.sh "$sample_id"
 
-    # depth of coverage
-    bam_path="$output_path"/Logs_Intermediates/StitchedRealigned/"$sample_id"/
 
+    #-------------------------------------------------------------------------------------
+    #  Run depth of coverage with limited bed (whole 500 takes a long time)
+    #-------------------------------------------------------------------------------------
+
+    # set and make filepaths for depth of coverage
+    bam_path="$output_path"/Logs_Intermediates/StitchedRealigned/"$sample_id"/
     depth_path="$output_path"/depth_of_coverage
     mkdir -p $depth_path
 
@@ -152,7 +161,11 @@ if [ "$dna_or_rna" = "DNA" ]; then
     conda deactivate
     set -u
 
-    # run coverageCalculator
+
+    #-------------------------------------------------------------------------------------
+    #  Run coverage calculator at 135X and 270X depth cutoffs
+    #-------------------------------------------------------------------------------------
+
     # repeat for each coverage value
     for min_coverage in $minimum_coverage; do
 
@@ -178,15 +191,12 @@ if [ "$dna_or_rna" = "DNA" ]; then
               --outname "$sample_id"_"$name" \
               --outdir  "$depth_path"/"$hscov_outdir"/
 
-
             # remove header from gaps file
             if [[ $(wc -l < "$depth_path"/"$hscov_outdir"/"$sample_id"_"$name".gaps) -eq 1 ]]; then
-
                 # no gaps
                 touch "$depth_path"/"$hscov_outdir"/"$sample_id"_"$name".nohead.gaps
 
             else
-
                 # gaps
                 grep -v '^#' "$depth_path"/"$hscov_outdir"/"$sample_id"_"$name".gaps > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$name".nohead.gaps
 
@@ -201,7 +211,11 @@ if [ "$dna_or_rna" = "DNA" ]; then
 
         done
 
-        # add hgvs nomenclature to gaps
+
+        #-------------------------------------------------------------------------------------
+        #  Run bed2hgvs to add hgvs nomenclature to gaps
+        #-------------------------------------------------------------------------------------
+    
         # activate bed2hgvs conda env
         set +u
         conda deactivate

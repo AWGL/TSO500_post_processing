@@ -1,9 +1,14 @@
+"""
+filter JSON from nirvana output produced in call_extra_variants.sh. 
+Outputs variants formatted so that they can be appended onto the bottom of the
+main CombinedVariantReport file from the app
+
+"""
+
 import sys
 import json
 
-# filter JSON output from nirvana to give output ready for variant database upload (minus the NTC checks)
-
-# open JSON
+# open annotated variants JSON passed in as sys arg
 with open(sys.argv[1], 'r') as f:
     y = json.load(f)
 
@@ -14,7 +19,7 @@ out_list = []
 for var in y['positions']:
     if 'PASS' in var['filters']:
 
-        # info common to variant (regarless of transcript)
+        # info common to variant (regardless of transcript)
         chr = var['chromosome']
         pos = str(var['position'])
         ref = var['refAllele']
@@ -23,7 +28,7 @@ for var in y['positions']:
         depth = var['samples'][0]['totalDepth']
         alt_reads = int(vaf * depth)
 
-        # could be multiallelic so loop through each option
+        # could be multiallelic so loop through each variant option
         for variant in var['variants']:
 
             alt = variant['altAllele']
@@ -63,7 +68,6 @@ for var in y['positions']:
         out_list.append(
             [gene, chr, pos, ref, alt, str(vaf), str(depth), hgvs_p, hgvs_c, csq, exon]
         )
-
 
 # print to screen - redirect to output within pipeline
 for var in out_list:

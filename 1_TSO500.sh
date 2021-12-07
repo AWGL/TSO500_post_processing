@@ -5,10 +5,9 @@
 #SBATCH --partition=demultiplexing
 #SBATCH --cpus-per-task=24
 
-# Description: Demultiplex run using Illumina TSO500 app
-# Author:      AWMGS
-# Mode:        BY_SAMPLE
-# Use:         sbatch within /Output/fastq/run_id directory
+# Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
+# Use:         from /Output/results/<run_id> directory, run: 
+#              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 1_TSO500.sh
 # Version:     1.0.2
 
 

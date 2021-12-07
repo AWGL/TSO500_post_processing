@@ -6,10 +6,10 @@
 #SBATCH --partition=high
 #SBATCH --cpus-per-task=20
 
-# Description: ----
-# Author:      AWMGS
-# Mode:        BY_SAMPLE
-# Use:         sbatch within run directory
+# Description: Combine all sample results and generate database input (must be run at the 
+#              end as NTC is required)
+# Use:         from /Output/results/<run_id> directory, run: 
+#              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 3_TSO500.sh
 # Version:     1.0.2
 
 
@@ -132,7 +132,7 @@ for worksheet_id in $(cat worksheets_rna.txt); do
 
         # *AllFusions file isn't made if the app doesnt finish, make a blank one instead
         if [[ ! -f ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv ]]; then
-            echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score"> ./Gathered_Results/Database/"$sample"_fusion_check.csv
+            echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score" > ./Gathered_Results/Database/"$sample"_fusion_check.csv
 
         # if app completes properly, format fusions for database upload
         else
