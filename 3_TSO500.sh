@@ -65,7 +65,7 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing
+conda activate TSO500_post_processing_dev
 set -u
 
 # create variants and coverage tables in correct format to import to database

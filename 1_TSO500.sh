@@ -67,7 +67,7 @@ echo "Start time: $now" > timings.txt
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing
+conda activate TSO500_post_processing_dev
 set -u
 
 # copy samplesheet to current directory
@@ -90,7 +90,7 @@ python /data/diagnostics/scripts/read_count_visualisation.py
 # reactivate main conda env
 set +u
 conda deactivate
-conda activate TSO500_post_processing
+conda activate TSO500_post_processing_dev
 set -u
 
 # make an empty file for recording completed samples 
