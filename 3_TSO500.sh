@@ -62,6 +62,11 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 #  Generate inputs for variants database - DNA
 ##############################################################################################
 
+# activate conda env
+set +u
+conda activate TSO500_post_processing
+set -u
+
 # create variants and coverage tables in correct format to import to database
 for worksheet_id in $(cat worksheets_dna.txt); do
 
@@ -176,3 +181,8 @@ done
 # add timings
 now=$(date +"%T")
 echo "End time:   $now" >> timings.txt
+
+# deactivate env
+set +u
+conda deactivate
+set -u
