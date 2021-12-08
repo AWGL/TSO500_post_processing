@@ -31,7 +31,7 @@ with open('worksheets_dna.txt','w') as worksheets_file_dna:
 		worksheets_file_dna.write('\n')
 
 # save one list per worksheet with all samples plus worksheet and referral info
-for worksheet in worksheets_dna:
+for worksheet in worksheets_file_dna:
 	table_dna_worksheet = table_dna
 	table_dna_worksheet = table_dna[table_dna['Sample_Plate'] == worksheet]
 	table_dna_worksheet.to_csv(f'samples_correct_order_{worksheet}_DNA.csv', index=False, header=False)
@@ -46,7 +46,7 @@ with open('worksheets_rna.txt','w') as worksheets_file_rna:
 		worksheets_file_rna.write('\n')
 
 # save one list per worksheet with all samples plus worksheet and referral info
-for worksheet in worksheets_rna:
+for worksheet in worksheets_file_rna:
 	table_rna_worksheet = table_rna
 	table_rna_worksheet = table_rna[table_rna['Sample_Plate'] == worksheet]
 	table_rna_worksheet.to_csv(f'samples_correct_order_{worksheet}_RNA.csv', index=False, header=False)
