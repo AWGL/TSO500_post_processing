@@ -112,7 +112,7 @@ if [ "$dna_or_rna" = "DNA" ]; then
     #  Call variants outside of app ROI
     #-------------------------------------------------------------------------------------
 
-    bash "$pipeline_scripts"/call_extra_padding_variants.sh "$sample_id"
+    bash "$pipeline_scripts"/call_extra_padding_variants.sh "$sample_id" "$pipeline_version"
 
 
     #-------------------------------------------------------------------------------------

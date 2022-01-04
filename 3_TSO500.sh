@@ -29,7 +29,6 @@ pipeline_scripts="$pipeline_dir"/scripts
 # setup analysis folders
 cd "$SLURM_SUBMIT_DIR"
 mkdir Gathered_Results
-mkdir Gathered_Results/Database
 mkdir BAMs
 
 # load singularity and anaconda modules
@@ -67,6 +66,9 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 set +u
 conda activate TSO500_post_processing_dev
 set -u
+
+# make folder for database output
+mkdir Gathered_Results/Database
 
 # create variants and coverage tables in correct format to import to database
 for worksheet_id in $(cat worksheets_dna.txt); do

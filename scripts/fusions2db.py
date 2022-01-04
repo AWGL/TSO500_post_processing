@@ -79,7 +79,7 @@ def format_fusions(fusion_results_dict, fusion_results_dict_ntc):
 
     # if no fusions, break from loop
     if fusion_results_dict['Fusions'][0][0] == 'NA':
-        break
+        pass
 
     # otherwise loop through fusions
     else: 
@@ -99,7 +99,7 @@ def format_fusions(fusion_results_dict, fusion_results_dict_ntc):
 
     # if no splice variants, break from loop
     if fusion_results_dict['Splice Variants'][0][0] == 'NA':
-        break
+        pass
 
     # otherwise loop through splice variants
     else:
