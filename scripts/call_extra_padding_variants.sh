@@ -162,7 +162,7 @@ $SING python /opt/illumina/step_modules/Annotation/annotation.py \
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing_dev
+conda activate TSO500_post_processing
 set -u
 
 # unzip variant JSON

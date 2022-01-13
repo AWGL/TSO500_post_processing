@@ -64,7 +64,7 @@ $app_dir/TruSight_Oncology_500_RUO.sh \
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing_dev
+conda activate TSO500_post_processing
 set -u
 
 # make folder for database output

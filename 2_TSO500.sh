@@ -72,7 +72,7 @@ referral=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f10 | cut -d";" 
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing_dev
+conda activate TSO500_post_processing
 set -u
 
 # make fastqc output folder in the sample folder
@@ -259,7 +259,7 @@ fi
 
 # activate conda env
 set +u
-conda activate TSO500_post_processing_dev
+conda activate TSO500_post_processing
 set -u
 
 # function to check FASTQC output
