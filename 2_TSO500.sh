@@ -23,7 +23,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=development
+pipeline_version=master
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
