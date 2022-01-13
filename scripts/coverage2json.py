@@ -375,7 +375,7 @@ if __name__ == '__main__':
 
 
 	## set decimal settings
-	decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+	decimal.getcontext().rounding = decimal.ROUND_DOWN
 
 
 	### parse referral_type group/bed files

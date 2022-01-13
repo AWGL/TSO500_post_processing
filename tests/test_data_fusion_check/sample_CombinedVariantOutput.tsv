@@ -1,0 +1,66 @@
+TruSight Oncology 500 - Combined Variant Output		
+For Research Use Only. Not for use in diagnostic procedures.		
+		
+[Analysis Details]		
+Pair ID	21M81042-1	
+DNA Sample ID	NA	
+RNA Sample ID	21M81042-1	
+Output Date	2021-02-24	
+Output Time	09:46:53	
+Module Version	NA	
+Pipeline Version	ruo-2.2.0.12	
+		
+[Sequencing Run Details]		
+Run Name	210219_A00748_0082_AHT3KKDMXX	
+Run Date	2021-02-19	
+DNA Sample Index ID	NA	
+RNA Sample Index ID	UDP0126	
+Instrument ID	A00748	
+Instrument Control Software Version	1.7.0	
+Instrument Type	NovaSeq6000	
+RTA Version	v3.4.4	
+SBS Reagent Cartridge Lot Number	20486192	
+Cluster Reagent Cartridge Lot Number	20487349	
+		
+[TMB]		
+Total TMB	NA	
+Coding Region Size in Megabases	NA	
+Number of Passing Eligible Variants	NA	
+		
+[MSI]		
+Usable MSI Sites	NA	
+Total MSI Sites Unstable	NA	
+Percent Unstable MSI Sites	NA	
+		
+[Gene Amplifications]		
+Gene	Fold Change	
+NA		
+		
+[Splice Variants]		
+Gene	Affected Exon	Breakpoint 1	Breakpoint 2	Splice Supporting Reads	Reference Reads Transcript
+EGFR	2-7/28	chr7:55087058	chr7:55223522	64	1
+MET	14/21	chr7:116411708	chr7:116414934	91	1
+		
+[Fusions]		
+Gene Pair	Breakpoint 1	Breakpoint 2	Fusion Supporting Reads	Gene 1 Reference Reads	Gene 2 Reference Reads
+TPM3-NTRK1	chr1:154142876	chr1:156844361	159	0	2
+LMNA-NTRK1	chr1:156100562	chr1:156844696	247	0	517
+SLC45A3-BRAF	chr1:205649521	chr7:140494266	518	0	1070
+EML4-ALK	chr2:42522654	chr2:29446394	75	749	9
+PPARG/AC016683.6;PAX8	chr3:12421199	chr2:113992971	182	11	0
+TFG-NTRK1	chr3:100451513	chr1:156844360	124	0	2
+FGFR3-TACC3	chr4:1808661	chr4:1741429	98	9	0
+FGFR3-BAIAP2L1	chr4:1808661	chr7:97991744	231	10	0
+SLC34A2-ROS1;GOPC	chr4:25665950	chr6:117645578	59	0	0
+CD74-ROS1;GOPC	chr5:149784243	chr6:117645578	96	2	0
+EGFR-SEPT14	chr7:55268103	chr7:55863785	75	7	0
+KIF5B-RET	chr10:32306071	chr10:43609927	339	2452	3
+NCOA4-RET	chr10:51582937	chr10:43612030	61	0	81
+CCDC6-RET	chr10:61665879	chr10:43612032	83	0	81
+ETV6-NTRK3	chr12:12022900	chr15:88483984	142	0	0
+TMPRSS2-ERG	chr21:42880006	chr21:39956867	620	1	1
+		
+[Small Variants]		
+Gene	Chromosome	Genomic Position	Reference Call	Alternative Call	Allele Frequency	Depth	P-Dot Notation	C-Dot Notation	Consequence(s)	Affected Exon(s)
+NA		
+		
