@@ -250,48 +250,43 @@ if [ "$dna_or_rna" = "DNA" ]; then
         set -u
 
     done
-fi
 
 
-##############################################################################################
-# Cosmic gaps
-##############################################################################################
 
-# activate conda env
-set +u
-conda activate TSO500_post_processing_development
-set -u
+    #-------------------------------------------------------------------------------------
+    #  Cosmic gaps
+    #-------------------------------------------------------------------------------------
 
+    # activate conda env
+    set +u
+    conda activate TSO500_post_processing_development
+    set -u
 
-depth_path="$output_path"/depth_of_coverage
+    depth_path="$output_path"/depth_of_coverage
 
+    # repeat for each coverage value
+    for min_coverage in $minimum_coverage; do
 
-# repeat for each coverage value
-for min_coverage in $minimum_coverage; do
-
-
-    #only run bedtools intersect for certain referral types
-    if [ $referral == "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ]
-    then
+        #only run bedtools intersect for certain referral types
+        if [ $referral == "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ]
+        then
 	
-        hscov_outdir=hotspot_coverage_"$min_coverage"x
+            hscov_outdir=hotspot_coverage_"$min_coverage"x
 
-        gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
+            gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
 
-        dos2unix $gaps_file
+            dos2unix $gaps_file
 
+            #find the overlap between the hotspots file and the referral file from cosmic
+            bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
 
-        #find the overlap between the hotspots file and the referral file from cosmic
-        bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
-
-
-    	#filter the output 
-    	python "$pipeline_dir"/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path "$pipeline_dir"/cosmic_bedfiles/
-    fi
+    	    #filter the output 
+    	    python "$pipeline_dir"/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path "$pipeline_dir"/cosmic_bedfiles/
+        fi
             
+    done
 
-
-done
+fi
 
 
 ##############################################################################################
