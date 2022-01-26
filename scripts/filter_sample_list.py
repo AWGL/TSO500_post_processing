@@ -1,9 +1,25 @@
 """
 Produce various sample/ worksheet lists for use downstream
+include dictionary to translate referral types
 
 """
 
 import pandas
+
+
+# create referral dictionary
+referral_dict  = {
+    "colorectal": "Colorectal",
+    "gist": "GIST",
+    "glioma": "Glioma",
+    "lung": "Lung",
+    "melanoma": "Melanoma",
+    "thyroid": "Thyroid",
+    "tumour": "Tumour",
+    "ntrk": "NTRK",
+    "null": "null",
+}
+
 
 # load in truncated samplesheet
 table = pandas.read_csv('SampleSheet_updated.csv', sep=',')
@@ -17,9 +33,18 @@ table = table[['Sample_ID', 'Sample_Plate','Sample_Type', 'Description']]
 
 # parse referral from description field
 table['Referral_value'] = table['Description'].str.split(';', expand=True)[2]
-table['Referral'] = table.Referral_value.str.split('=',expand=True)[1]
+table['Referral_id'] = table.Referral_value.str.split('=',expand=True)[1]
 table = table.drop(['Referral_value'], axis=1)
 table = table.drop(['Description'], axis=1)
+
+# create list of formatted referrals from dictionary
+referral_new = []
+for item in table['Referral_id']:
+	referral_new.append(referral_dict[item])
+
+# add new referral column and drop old referral column
+table['Referral'] = referral_new
+table = table.drop(['Referral_id'], axis=1)
 
 # subset all DNA samples
 table_dna = table[table['Sample_Type'] == 'DNA']
