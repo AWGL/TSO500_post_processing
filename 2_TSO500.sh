@@ -269,7 +269,7 @@ for min_coverage in $minimum_coverage; do
     dos2unix $gaps_file
 
     #only run bedtools intersect for certain referral types
-    if [ "$referral" = "Melanoma" |  "$referral" = "Lung" | "$referral" = "Colorectal" ]; then
+    if [ "$referral" = "Melanoma" |  "$referral" = "Lung" | "$referral" = "Colorectal" | "$referral" = "GIST" ]; then
 
         #find the overlap between the hotspots file and the referral file from cosmic
         /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
