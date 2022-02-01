@@ -19,7 +19,7 @@ bedfile_path=args.bedfile_path
 #load file
 file=pandas.read_csv(gaps_path+sampleId+"_"+referral+"_intersect.txt", sep='\t', names=['Chr','Start', 'End', 'Info', 'Chr_cosmic','Start_cosmic', 'End_cosmic', '7', '8','9', '10', 'Counts'])
 
-if (referral=="Melanoma" or referral=="Lung" or referral=="Glioma"):
+if (referral=="Melanoma" or referral=="Lung" or referral=="Glioma" or referral=="Colorectal"):
 
     if (file.shape[0]!=0):
 
