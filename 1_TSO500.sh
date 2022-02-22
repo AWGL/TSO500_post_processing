@@ -97,6 +97,19 @@ set -u
 > completed_samples.txt
 
 
+# activate conda env
+set +u
+conda activate TSO500_post_processing_development
+set -u
+
+#run dos2unix on samplesheet ready for cosmic gaps section
+dos2unix SampleSheet_updated.csv
+
+# deactivate env
+set +u
+conda deactivate
+set -u
+
 ##############################################################################################
 #  Kick off script 2
 ##############################################################################################
