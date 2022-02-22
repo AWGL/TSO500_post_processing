@@ -3,7 +3,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --output=%j-%N-2_TSO500.out
 #SBATCH --error=%j-%N-2_TSO500.err
-#SBATCH --partition=high
+#SBATCH --partition=low
 #SBATCH --cpus-per-task=24
 
 # Description: Run Illumina TSO500 app for each sample then run postprocessing steps - FastQC, 
@@ -23,7 +23,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=master
+pipeline_version=cosmic
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
@@ -250,38 +250,49 @@ if [ "$dna_or_rna" = "DNA" ]; then
         set -u
 
     done
+
+
+
+    #-------------------------------------------------------------------------------------
+    #  Cosmic gaps
+    #-------------------------------------------------------------------------------------
+
+    # activate conda env
+    set +u
+    conda activate TSO500_post_processing_development
+    set -u
+
+    depth_path="$output_path"/depth_of_coverage
+
+    # repeat for each coverage value
+    for min_coverage in $minimum_coverage; do
+
+        #only run bedtools intersect for certain referral types
+        if [ $referral == "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+        then
+	
+            hscov_outdir=hotspot_coverage_"$min_coverage"x
+
+            gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
+
+            dos2unix $gaps_file
+
+            #find the overlap between the hotspots file and the referral file from cosmic
+            bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
+
+    	    #filter the output 
+    	    python "$pipeline_dir"/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path "$pipeline_dir"/cosmic_bedfiles/
+        fi
+            
+    done
+
+    # deactivate env
+    set +u
+    conda deactivate
+    set -u
+
 fi
 
-
-##############################################################################################
-# Cosmic gaps
-##############################################################################################
-
-#TODO create bedtools and dos2unix conda environment
-
-# repeat for each coverage value
-for min_coverage in $minimum_coverage; do
-
-    hscov_outdir=hotspot_coverage_"$min_coverage"x
-
-    gaps_file="$depth_path"/"$hscov_outdir"/"$sampleId"_"$referral"_hotspots.gaps
-
-    dos2unix $gaps_file
-
-    #only run bedtools intersect for certain referral types
-    if [ "$referral" = "Melanoma" |  "$referral" = "Lung" | "$referral" = "Colorectal" | "$referral" = "GIST" ]; then
-
-        #find the overlap between the hotspots file and the referral file from cosmic
-        /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
-
-    fi
-            
-    #filter the output 
-    python "$pipeline_dir"/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path "$pipeline_dir"/cosmic_bedfiles/
-
-
-
-done
 
 
 ##############################################################################################
