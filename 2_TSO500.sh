@@ -48,7 +48,7 @@ vendor_capture_bed="$pipeline_dir"/vendorCaptureBed_100pad_updated.bed
 preferred_transcripts="$pipeline_dir"/preferred_transcripts.txt
 worksheet=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f3)
 dna_or_rna=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f8)
-referral=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f10 | cut -d";" -f3 | cut -d= -f2)
+
 
 
 ##############################################################################################
@@ -249,7 +249,6 @@ if [ "$dna_or_rna" = "DNA" ]; then
         conda deactivate
         set -u
 
-    done
 
 
 
@@ -262,34 +261,29 @@ if [ "$dna_or_rna" = "DNA" ]; then
     conda activate TSO500_post_processing_development
     set -u
 
-    depth_path="$output_path"/depth_of_coverage
-
-    # repeat for each coverage value
-    for min_coverage in $minimum_coverage; do
-
-        #only run bedtools intersect for certain referral types
-        if [ $referral == "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
-        then
+    #only run bedtools intersect for certain referral types
+    referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
+    if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+    then
 	
-            hscov_outdir=hotspot_coverage_"$min_coverage"x
+        gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
 
-            gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
+        dos2unix $gaps_file
 
-            dos2unix $gaps_file
+        #find the overlap between the hotspots file and the referral file from cosmic
+        bedtools intersect -loj -F 1 -a $gaps_file -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt -wao
 
-            #find the overlap between the hotspots file and the referral file from cosmic
-            bedtools intersect -loj -F 1 -a $gaps_file -b "$pipeline_dir"/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
+    fi
 
-    	    #filter the output 
-    	    python "$pipeline_dir"/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path "$pipeline_dir"/cosmic_bedfiles/
-        fi
+    #filter the output 
+    python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
             
-    done
-
     # deactivate env
     set +u
     conda deactivate
     set -u
+
+    done
 
 fi
 
