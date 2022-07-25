@@ -1,4 +1,4 @@
-name: TSO500_post_processing_dev
+name: TSO500_post_processing
 channels:
   - bioconda
   - conda-forge

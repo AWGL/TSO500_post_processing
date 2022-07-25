@@ -3,7 +3,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --output=%j-%N-2_TSO500.out
 #SBATCH --error=%j-%N-2_TSO500.err
-#SBATCH --partition=low
+#SBATCH --partition=high
 #SBATCH --cpus-per-task=24
 
 # Description: Run Illumina TSO500 app for each sample then run postprocessing steps - FastQC, 
@@ -11,7 +11,7 @@
 #              off script 3 when all samples completed
 # Use:         from /Output/results/<run_id> directory, for each sample run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.2
+# Version:     1.0.4
 
 
 ##############################################################################################
@@ -23,7 +23,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=cosmic
+pipeline_version=master
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
@@ -48,7 +48,6 @@ vendor_capture_bed="$pipeline_dir"/vendorCaptureBed_100pad_updated.bed
 preferred_transcripts="$pipeline_dir"/preferred_transcripts.txt
 worksheet=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f3)
 dna_or_rna=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f8)
-
 
 
 ##############################################################################################
@@ -250,38 +249,47 @@ if [ "$dna_or_rna" = "DNA" ]; then
         set -u
 
 
+        #-------------------------------------------------------------------------------------
+        #  Cosmic gaps
+        #-------------------------------------------------------------------------------------
 
+        # activate conda env
+        set +u
+        conda activate TSO500_post_processing
+        set -u
 
-    #-------------------------------------------------------------------------------------
-    #  Cosmic gaps
-    #-------------------------------------------------------------------------------------
+        # parse referral - must be in DNA loop
+        referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
 
-    # activate conda env
-    set +u
-    conda activate TSO500_post_processing_development
-    set -u
-
-    #only run bedtools intersect for certain referral types
-    referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
-    if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
-    then
+        # only run bedtools intersect for certain referral types
+        if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+        then
 	
-        gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
+            gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
+            dos2unix $gaps_file
 
-        dos2unix $gaps_file
+            #find the overlap between the hotspots file and the referral file from cosmic
+            bedtools intersect \
+              -loj \
+              -F 1 \
+              -a $gaps_file \
+              -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
+              -wao \
+            > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
 
-        #find the overlap between the hotspots file and the referral file from cosmic
-        bedtools intersect -loj -F 1 -a $gaps_file -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt -wao
+        fi
 
-    fi
-
-    #filter the output 
-    python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py --sampleId $sample_id --referral $referral --gaps_path "$depth_path"/"$hscov_outdir"/ --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
+        #filter the output 
+        python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py \
+          --sampleId $sample_id \
+          --referral $referral \
+          --gaps_path "$depth_path"/"$hscov_outdir"/ \
+          --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
             
-    # deactivate env
-    set +u
-    conda deactivate
-    set -u
+        # deactivate env
+        set +u
+        conda deactivate
+        set -u
 
     done
 

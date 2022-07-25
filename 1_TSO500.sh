@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.2
+# Version:     1.0.4
 
 
 ##############################################################################################
@@ -20,7 +20,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=cosmic
+pipeline_version=master
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
@@ -96,19 +96,9 @@ set -u
 # make an empty file for recording completed samples 
 > completed_samples.txt
 
-
-# activate conda env
-set +u
-conda activate TSO500_post_processing_development
-set -u
-
 #run dos2unix on samplesheet ready for cosmic gaps section
 dos2unix SampleSheet_updated.csv
 
-# deactivate env
-set +u
-conda deactivate
-set -u
 
 ##############################################################################################
 #  Kick off script 2
