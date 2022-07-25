@@ -1,14 +1,16 @@
 name: TSO500_post_processing
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
-  - python=3.8.3
-  - pandas=1.0.5
-  - numpy=1.18.5
+  - bedtools=2.27.1
   - bzip2=1.0.8
+  - dos2unix=7.4.1
+  - fastqc=0.11.9
   - gatk4=4.2.0.0
+  - numpy=1.18.5
+  - pandas=1.0.5
+  - python=3.8.3
   - samtools=1.10
   - tabix=0.2.6
-  - fastqc=0.11.9

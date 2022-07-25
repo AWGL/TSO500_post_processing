@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.2
+# Version:     1.0.4
 
 
 ##############################################################################################
@@ -95,6 +95,9 @@ set -u
 
 # make an empty file for recording completed samples 
 > completed_samples.txt
+
+#run dos2unix on samplesheet ready for cosmic gaps section
+dos2unix SampleSheet_updated.csv
 
 
 ##############################################################################################
