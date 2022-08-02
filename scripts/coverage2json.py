@@ -354,7 +354,7 @@ def parse_sample_data(sample_coverage_folder, referral_type, hotspots_present, g
 		sample_hotspot_region_df['PERC_COVERAGE@270'] = sample_hotspot_region_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 		sample_hotspot_region_df['PERC_COVERAGE@135'] = sample_hotspot_region_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	else:
-		sample_hotspot_region_df = pd.Dataframe()
+		sample_hotspot_region_df = pd.DataFrame()
 
 
 	## join genescreen if present, remove nan values and round to integer, else make empty df
@@ -364,7 +364,7 @@ def parse_sample_data(sample_coverage_folder, referral_type, hotspots_present, g
 		sample_genescreen_region_df['PERC_COVERAGE@270'] = sample_genescreen_region_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 		sample_genescreen_region_df['PERC_COVERAGE@135'] = sample_genescreen_region_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	else:
-		sample_genescreen_region_df = pd.Dataframe()
+		sample_genescreen_region_df = pd.DataFrame()
 
 
 	## join gene level
@@ -423,31 +423,36 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 				if key == item[3].split('(')[0]:
 					filtered_hotspot_region_list.append(item)
 			output_dict[key]['hotspot_regions'] = filtered_hotspot_region_list
+
+			## check if any gaps and add if there are
+			if len(sample_135_gaps_df) > 0:
+				filtered_135_gaps_list = []
+				sample_135_gaps_list = sample_135_gaps_df.values.tolist()
+				for item in sample_135_gaps_list:
+					# check if gene is the gene in the 4th column then add
+					if key == item[3].split('(')[0]:
+						filtered_135_gaps_list.append(item)
+				output_dict[key]['gaps_135'] = filtered_135_gaps_list
+			else:
+				output_dict[key]['gaps_135'] = []
+
+			if len(sample_270_gaps_df) > 0:
+				filtered_270_gaps_list = []
+				sample_270_gaps_list = sample_270_gaps_df.values.tolist()
+				for item in sample_270_gaps_list:
+					# check if gene is the gene in the 4th column then add
+					if key == item[3].split('(')[0]:
+						filtered_270_gaps_list.append(item)
+				output_dict[key]['gaps_270'] = filtered_270_gaps_list
+			else:
+				output_dict[key]['gaps_270'] = []
+
+
 		else:
 			output_dict[key]['hotspot_regions'] = []
-
-		## check if any gaps and add if there are
-		if len(sample_135_gaps_df) > 0:
-			filtered_135_gaps_list = []
-			sample_135_gaps_list = sample_135_gaps_df.values.tolist()
-			for item in sample_135_gaps_list:
-				# check if gene is the gene in the 4th column then add
-				if key == item[3].split('(')[0]:
-					filtered_135_gaps_list.append(item)
-			output_dict[key]['gaps_135'] = filtered_135_gaps_list
-		else:
 			output_dict[key]['gaps_135'] = []
-
-		if len(sample_270_gaps_df) > 0:
-			filtered_270_gaps_list = []
-			sample_270_gaps_list = sample_270_gaps_df.values.tolist()
-			for item in sample_270_gaps_list:
-				# check if gene is the gene in the 4th column then add
-				if key == item[3].split('(')[0]:
-					filtered_270_gaps_list.append(item)
-			output_dict[key]['gaps_270'] = filtered_270_gaps_list
-		else:
 			output_dict[key]['gaps_270'] = []
+
 	
 	return output_dict
 
