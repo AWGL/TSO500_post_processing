@@ -10,7 +10,25 @@ import numpy as np
 """
 - script to format the output of CoverageCalculatorPy (.totalcoverage, .coverage) into a JSON format for importing into the new database
 - for use as part of the TSO500 pipeline
-- usage: python coverage2json.py -r <referral type> -g <hotspots_coverage folder path> -s <sample Coverage_results folder> -n <ntc Coverage_results folder>
+- file requirements:
+	- for main gene regions:
+		- hotspot_coverage/<referral>_combined.groups
+		- NTC_coverage_results/<NTC_id>_<referral_type>_combined.totalCoverage
+		- sample_coverage_results/<sample_id>_<referral_type>_combined.totalCoverage
+	- for hotspots:
+		- hotspot_coverage/<referral>_hotspots.bed
+		- NTC_coverage_results/<NTC_id>_<referral_type>_hotspots.coverage
+		- sample_coverage_results_270/<sample_id>_<referral_type>_hotspots.coverage
+		- sample_coverage_results_135/<sample_id>_<referral_type>_hotspots.coverage
+	- for genescreen:
+		- hotspot_coverage/<referral>_genescreen.bed
+		- NTC_coverage_results_270/<NTC_id>_<referral_type>_genescreen.coverage
+		- sample_coverage_results_270/<sample_id>_<referral_type>_genescreen.coverage
+		- sample_coverage_results_135/<sample_id>_<referral_type>_genescreen.coverage
+	- for gaps (hotspot only):
+		- sample_coverage_results_270/<sample_id>_<referral_type>_hotspots.gaps
+		- sample_coverage_results_135/<sample_id>_<referral_type>_hotspots.gaps
+- usage: python coverage2json.py -r <referral type> -g <hotspots_coverage folder path> -s <sample Coverage_results folder> -n <ntc Coverage_results folder> -o <output file name>
 - output: {sampleid}_{referral}_db_coverage.json file
 { 
 	"gene1"	:	{
@@ -76,12 +94,14 @@ def parse_referral_type_files(referral_type, groups_folder):
 	- output:
 	1) list of distinct gene names from <referral>_combined.groups file
 	2) df of <referral>_genescreen.bed if present, blank if not present for referral type
-	3) df of <referral>_hotspots.bed
+	3) df of <referral>_hotspots.bed if present, blank if not present for referral type
 	4) True or False value for if <referral>_genescreen.bed is present
+	5) True or False value for if <referral>_hotspots.bed is present
 	"""
 
-	## create zero genescreen counter
+	## create zero genescreen and hotspot counter
 	genescreen_count = 0
+	hotspots_counter = 0
 
 	dir_list = os.listdir(groups_folder)
 
@@ -103,6 +123,7 @@ def parse_referral_type_files(referral_type, groups_folder):
 
 		## parse hotspots.bed file
 		elif file == f'{referral_type}_hotspots.bed':
+			hotspots_counter += 1
 			hotspots_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'INFO'], index_col = False)
 			hotspots_df.drop(columns = ['INFO'], inplace = True)
 
@@ -115,16 +136,27 @@ def parse_referral_type_files(referral_type, groups_folder):
 		## create blank dataframe to return when no genescreen <referral>.bed file present
 		genescreen_df = pd.DataFrame()
 
-	return gene_list, genescreen_df, hotspots_df, genescreen_present
+	## set hotspots variable as not all referral types have hotspots bed/groups
+	if hotspots_counter > 0:
+		hotspots_present = True
+
+	else:
+		hotspots_present = False
+		## create blank dataframe to return when no hotspot <referral>.bed file present
+		hotspots_df = pd.DataFrame()
 
 
-def parse_NTC_data(NTC_coverage_folder, referral_type):
+	return gene_list, genescreen_df, hotspots_df, genescreen_present, hotspots_present
+
+
+def parse_NTC_data(NTC_coverage_folder, referral_type, hotspots_present, genescreen_present):
 	"""
 	- function to parse NTC data from .totalCoverage and .coverage files from CoverageCalculatorPy
 	- input: path to NTC Coverage_results folder and referral type
 	- output: 
 	1) df of .totalcoverage gene level (gene id, ntc avg depth)
-	2) df of .coverage region level (chr, start, end, meta, ntc avg depth)
+	2) df of .coverage hotspot region level (chr, start, end, meta, ntc avg depth) or blank df
+	3) df of .coverage genescreen region level (chr, start, end, meta, ntc avg depth) or blank df
 	"""
 
 	## parse .totalCoverage and .coverage for NTC_<referral>_combined
@@ -166,33 +198,56 @@ def parse_NTC_data(NTC_coverage_folder, referral_type):
 
 			ntc_gene_df.rename(columns={'AVG_DEPTH':'NTC_AVG_DEPTH'}, inplace = True)
 
-		## parse .coverage
-		elif file == f'{sampleid}_{referral_type}_combined.coverage':
-			ntc_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
-			ntc_region_df.drop(columns = ['PERC_COVERAGE@270'], inplace = True)
-			ntc_region_df.rename(columns={'AVG_DEPTH':'NTC_AVG_DEPTH'}, inplace = True)
+		## parse .coverage for hotspots
+		elif file == f'{sampleid}_{referral_type}_hotspots.coverage':
+			ntc_hotspot_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+			ntc_hotspot_region_df.drop(columns = ['PERC_COVERAGE@270'], inplace = True)
+			ntc_hotspot_region_df.rename(columns={'AVG_DEPTH':'NTC_AVG_DEPTH'}, inplace = True)
+
+
+		## parse .coverage for genescreen
+		elif file == f'{sampleid}_{referral_type}_genescreen.coverage':
+			ntc_genescreen_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+			ntc_genescreen_region_df.drop(columns = ['PERC_COVERAGE@270'], inplace = True)
+			ntc_genescreen_region_df.rename(columns={'AVG_DEPTH':'NTC_AVG_DEPTH'}, inplace = True)
+
 
 	ntc_gene_df['NTC_AVG_DEPTH'] = ntc_gene_df['NTC_AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-	ntc_region_df['NTC_AVG_DEPTH'] = ntc_region_df['NTC_AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	
+	## if hotspots present, format avg depth, or create empty df if not present
+	if hotspots_present:
+		ntc_hotspot_region_df['NTC_AVG_DEPTH'] = ntc_hotspot_region_df['NTC_AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		ntc_hotspot_region_df = pd.DataFrame()
 
-	return ntc_gene_df, ntc_region_df
+	## if genescreen present, format avg depth, or create empty df if not present
+	if genescreen_present:
+		ntc_genescreen_region_df['NTC_AVG_DEPTH'] = ntc_genescreen_region_df['NTC_AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		ntc_genescreen_region_df = pd.DataFrame()
+
+	return ntc_gene_df, ntc_hotspot_region_df, ntc_genescreen_region_df
 
 
-def parse_sample_data(sample_coverage_folder, referral_type):
+def parse_sample_data(sample_coverage_folder, referral_type, hotspots_present, genescreen_present):
 	"""
 	- function to parse sample data from .totalCoverage and .coverage files from CoverageCalculatorPy
 	- input: path to sample Coverage_results folder and referral type
 	- output: 
 	1) sampleid
 	2) df of .totalcoverage gene level (gene id, avg depth, % cov 270, % cov 135)
-	3) df of .coverage region level (chr, start, end, meta, avg depth, % cov 270, % cov 135)
-	4) df of 135 .gaps (chr, start, end, meta, cosmic)
-	5) df of 270 .gaps (chr, start, end, meta, cosmic)
+	3) df of .coverage hotspot region level (chr, start, end, meta, avg depth, % cov 270, % cov 135) or blank df
+	4) df of .coverage genescreen region level (chr, start, end, meta, avg depth, % cov 270, % cov 135) or blank df
+	5) df of 135 .gaps (chr, start, end, meta, cosmic)
+	6) df of 270 .gaps (chr, start, end, meta, cosmic)
 	"""
 
 	## parse 270x
 	cov_270_filepath = os.path.join(sample_coverage_folder,'hotspot_coverage_270x')
 	dir_list = os.listdir(cov_270_filepath)
+
+	## create gaps file counter
+	gaps_270_count = 0
 
 	## rip sampleid from filename
 	sampleid = dir_list[0].split('_')[0]
@@ -200,7 +255,7 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 	for file in dir_list:
 		filepath = os.path.join(cov_270_filepath, file)
 
-		## parse .totalCoverage
+		## parse .totalCoverage for gene level info
 		if file == f'{sampleid}_{referral_type}_combined.totalCoverage':
 			sample_270_gene_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
@@ -226,18 +281,27 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 			## drop irrelevant feature column
 			sample_270_gene_df.drop(columns = ['FEATURE'], inplace = True)
 
-		## parse .coverage
-		elif file == f'{sampleid}_{referral_type}_combined.coverage':
-			sample_270_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+		## parse .coverage for hotspots
+		elif file == f'{sampleid}_{referral_type}_hotspots.coverage':
+			sample_270_hotspot_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
-		## parse 270 gaps and add cosmic column
+		## parse .coverage for genescreen
+		elif file == f'{sampleid}_{referral_type}_genescreen.coverage':
+			sample_270_genescreen_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+
+		## parse 270 gaps (hotspot only) and add cosmic column
 		elif file == f'{sampleid}_{referral_type}_hotspots.gaps':
+			gaps_270_count += 1
 			sample_270_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = None, index_col = False)
 			sample_270_gaps_df['COSMIC'] = 'N/A'
+
 
 	## parse 135x
 	cov_135_filepath = os.path.join(sample_coverage_folder,'hotspot_coverage_135x')
 	dir_list = os.listdir(cov_135_filepath)
+
+	## create gaps file counter
+	gaps_135_count = 0
 
 	## rip sampleid from filename
 	sampleid = dir_list[0].split('_')[0]
@@ -262,36 +326,64 @@ def parse_sample_data(sample_coverage_folder, referral_type):
 				splitline = line.split('_')
 				gene_list.append(splitline[gene_pos])
 
-
 			sample_135_gene_df.insert(0,'GENE', gene_list)
 
 			## drop irrelevant feature column
 			sample_135_gene_df.drop(columns = ['FEATURE'], inplace = True)
 
-		## parse .coverage
-		elif file == f'{sampleid}_{referral_type}_combined.coverage':
-			sample_135_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+		## parse hotspot .coverage
+		elif file == f'{sampleid}_{referral_type}_hotspots.coverage':
+			sample_135_hotspot_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
 
-		## parse 135 gaps
+		## parse genescreen .coverage
+		elif file == f'{sampleid}_{referral_type}_genescreen.coverage':
+			sample_135_genescreen_region_df = pd.read_csv(filepath, sep = '\t', index_col = False)
+
+		## parse 135 gaps (hotspots only)
 		elif file == f'{sampleid}_{referral_type}_hotspots.gaps':
+			gaps_135_count += 1
 			sample_135_gaps_df = pd.read_csv(filepath, sep = '\t', names = ['CHR', 'START', 'END', 'META'], header = None, index_col = False)
 			sample_135_gaps_df['COSMIC'] = 'N/A'
 
-	## join 270 and 135 tables
-	sample_region_df = pd.merge(sample_270_region_df, sample_135_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META', 'AVG_DEPTH'])
-	sample_gene_df = pd.merge(sample_270_gene_df, sample_135_gene_df, how = 'outer', on = ['GENE', 'AVG_DEPTH'])
 
+	## join 270 and 135 tables
+	## join hotspots if present, remove nan values and round to integer, else make empty df
+	if hotspots_present:
+		sample_hotspot_region_df = pd.merge(sample_270_hotspot_region_df, sample_135_hotspot_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META', 'AVG_DEPTH'])
+		sample_hotspot_region_df['AVG_DEPTH'] = sample_hotspot_region_df['AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+		sample_hotspot_region_df['PERC_COVERAGE@270'] = sample_hotspot_region_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+		sample_hotspot_region_df['PERC_COVERAGE@135'] = sample_hotspot_region_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		sample_hotspot_region_df = pd.DataFrame()
+
+
+	## join genescreen if present, remove nan values and round to integer, else make empty df
+	if genescreen_present:
+		sample_genescreen_region_df = pd.merge(sample_270_genescreen_region_df, sample_135_genescreen_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META', 'AVG_DEPTH'])
+		sample_genescreen_region_df['AVG_DEPTH'] = sample_genescreen_region_df['AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+		sample_genescreen_region_df['PERC_COVERAGE@270'] = sample_genescreen_region_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+		sample_genescreen_region_df['PERC_COVERAGE@135'] = sample_genescreen_region_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		sample_genescreen_region_df = pd.DataFrame()
+
+
+	## join gene level
+	sample_gene_df = pd.merge(sample_270_gene_df, sample_135_gene_df, how = 'outer', on = ['GENE', 'AVG_DEPTH'])
 	sample_gene_df['AVG_DEPTH'] = sample_gene_df['AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	sample_gene_df['PERC_COVERAGE@270'] = sample_gene_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	sample_gene_df['PERC_COVERAGE@135'] = sample_gene_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-	sample_region_df['AVG_DEPTH'] = sample_region_df['AVG_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-	sample_region_df['PERC_COVERAGE@270'] = sample_region_df['PERC_COVERAGE@270'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-	sample_region_df['PERC_COVERAGE@135'] = sample_region_df['PERC_COVERAGE@135'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
-
-	return sampleid, sample_gene_df, sample_region_df, sample_135_gaps_df, sample_270_gaps_df
 
 
-def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present):
+	## make empty gaps df if no hotspots gaps files
+	if gaps_270_count == 0:
+		sample_270_gaps_df = pd.DataFrame(columns=['CHR', 'START', 'END', 'META', 'COSMIC'])
+	if gaps_135_count == 0:
+		sample_135_gaps_df = pd.DataFrame(columns=['CHR', 'START', 'END', 'META', 'COSMIC'])
+
+	return sampleid, sample_gene_df, sample_hotspot_region_df, sample_genescreen_region_df, sample_135_gaps_df, sample_270_gaps_df
+
+
+def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present, hotspots_present):
 	'''
 	- function to collate all dataframes into one nested dictionary to export to JSON format
 	- input: gene list, gene level df, genescreen region df, hotspot region df, 270 gaps df, 135 gaps df
@@ -322,35 +414,45 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 			output_dict[key]['genescreen_regions'] = []
 
 		## hotspots
-		filtered_hotspot_region_list = []
-		hotspot_region_list = hotspots_region_df.values.tolist()
-		for item in hotspot_region_list:
-			# check if gene is the gene in the 4th column then add
-			if key == item[3].split('(')[0]:
-				filtered_hotspot_region_list.append(item)
-		output_dict[key]['hotspot_regions'] = filtered_hotspot_region_list
+		if hotspots_present:
+			filtered_hotspot_region_list = []
+			hotspot_region_list = hotspots_region_df.values.tolist()
+			for item in hotspot_region_list:
+				print(item)
+				# check if gene is the gene in the 4th column then add
+				if key == item[3].split('(')[0]:
+					filtered_hotspot_region_list.append(item)
+			output_dict[key]['hotspot_regions'] = filtered_hotspot_region_list
 
-		## check if any gaps and add if there are
-		if len(sample_135_gaps_df) > 0:
-			filtered_135_gaps_list = []
-			sample_135_gaps_list = sample_135_gaps_df.values.tolist()
-			for item in sample_135_gaps_list:
-				# check if gene is the gene in the 4th column then add
-				if key == item[3].split('(')[0]:
-					filtered_135_gaps_list.append(item)
-			output_dict[key]['gaps_135'] = filtered_135_gaps_list
+			## check if any gaps and add if there are
+			if len(sample_135_gaps_df) > 0:
+				filtered_135_gaps_list = []
+				sample_135_gaps_list = sample_135_gaps_df.values.tolist()
+				for item in sample_135_gaps_list:
+					# check if gene is the gene in the 4th column then add
+					if key == item[3].split('(')[0]:
+						filtered_135_gaps_list.append(item)
+				output_dict[key]['gaps_135'] = filtered_135_gaps_list
+			else:
+				output_dict[key]['gaps_135'] = []
+
+			if len(sample_270_gaps_df) > 0:
+				filtered_270_gaps_list = []
+				sample_270_gaps_list = sample_270_gaps_df.values.tolist()
+				for item in sample_270_gaps_list:
+					# check if gene is the gene in the 4th column then add
+					if key == item[3].split('(')[0]:
+						filtered_270_gaps_list.append(item)
+				output_dict[key]['gaps_270'] = filtered_270_gaps_list
+			else:
+				output_dict[key]['gaps_270'] = []
+
+
 		else:
+			output_dict[key]['hotspot_regions'] = []
 			output_dict[key]['gaps_135'] = []
-		if len(sample_270_gaps_df) > 0:
-			filtered_270_gaps_list = []
-			sample_270_gaps_list = sample_270_gaps_df.values.tolist()
-			for item in sample_270_gaps_list:
-				# check if gene is the gene in the 4th column then add
-				if key == item[3].split('(')[0]:
-					filtered_270_gaps_list.append(item)
-			output_dict[key]['gaps_270'] = filtered_270_gaps_list
-		else:
 			output_dict[key]['gaps_270'] = []
+
 	
 	return output_dict
 
@@ -379,43 +481,47 @@ if __name__ == '__main__':
 
 
 	### parse referral_type group/bed files
-	gene_list, genescreen_df, hotspots_df, genescreen_present = parse_referral_type_files(args.referral, args.groups_folder)
+	gene_list, genescreen_df, hotspots_df, genescreen_present, hotspots_present = parse_referral_type_files(args.referral, args.groups_folder)
 
 	### parse NTC sample 270x for average depth per gene (.totalCoverage) and per region (.coverage)
-	ntc_gene_df, ntc_region_df = parse_NTC_data(args.ntc_coverage, args.referral)
+	ntc_gene_df, ntc_hotspot_region_df, ntc_genescreen_region_df = parse_NTC_data(args.ntc_coverage, args.referral, hotspots_present, genescreen_present)
 
 
 	### parse sample 135x and 270x files
-	sampleid, sample_gene_df, sample_region_df, sample_135_gaps_df, sample_270_gaps_df = parse_sample_data(args.sample_coverage, args.referral)
+	sampleid, sample_gene_df, sample_hotspot_region_df, sample_genescreen_region_df, sample_135_gaps_df, sample_270_gaps_df = parse_sample_data(args.sample_coverage, args.referral, hotspots_present, genescreen_present)
 
 
 	### create json pieces
-	## join NTC data to main df
-	main_region_df = pd.merge(sample_region_df, ntc_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META'])
+	## join NTC data to hotspots and genescreen dfs if present, else create blank df
+	if hotspots_present:
+		main_hotspot_region_df = pd.merge(sample_hotspot_region_df, ntc_hotspot_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META'])
+		main_hotspot_region_df['PERC_NTC_DEPTH'] = (main_hotspot_region_df['NTC_AVG_DEPTH'] / main_hotspot_region_df['AVG_DEPTH']) * 100
+		main_hotspot_region_df['PERC_NTC_DEPTH'] = main_hotspot_region_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		main_hotspot_region_df = pd.DataFrame()
+
+	if genescreen_present:
+		main_genescreen_region_df = pd.merge(sample_genescreen_region_df, ntc_genescreen_region_df, how = 'outer', on = ['CHR', 'START', 'END', 'META'])
+		main_genescreen_region_df['PERC_NTC_DEPTH'] = (main_genescreen_region_df['NTC_AVG_DEPTH'] / main_genescreen_region_df['AVG_DEPTH']) * 100
+		main_genescreen_region_df['PERC_NTC_DEPTH'] = main_genescreen_region_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
+	else:
+		main_genescreen_region_df = pd.DataFrame()
+
+	## join ntc information to gene level df
 	main_gene_df = pd.merge(sample_gene_df, ntc_gene_df, how = 'outer', on = ['GENE'])
+
 
 	## change index of gene df to be the gene name for iloc later
 	main_gene_df.set_index('GENE', inplace = True)
 
+
 	## create and format percent NTC column
-	main_region_df['PERC_NTC_DEPTH'] = (main_region_df['NTC_AVG_DEPTH'] / main_region_df['AVG_DEPTH']) * 100
-	main_region_df['PERC_NTC_DEPTH'] = main_region_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 	main_gene_df['PERC_NTC_DEPTH'] = (main_gene_df['NTC_AVG_DEPTH'] / main_gene_df['AVG_DEPTH']) * 100
 	main_gene_df['PERC_NTC_DEPTH'] = main_gene_df['PERC_NTC_DEPTH'].apply(lambda x: None if np.isnan(x) else int((Decimal(str(x)).quantize(Decimal('1')))))
 
-	## seperate main df into hotspot and genescreen if genescreen is present
-	if genescreen_present:
-		genescreen_region_df = pd.merge(genescreen_df, main_region_df, how = 'left', on = ['CHR', 'START', 'END'])
-		hotspots_region_df = pd.merge(hotspots_df, main_region_df, how = 'left', on = ['CHR', 'START', 'END'])
-	else:
-		hotspots_region_df = main_region_df
-		
-		## create genescreen_region_df as nothing to allow for exporting and then importing to create dict
-		genescreen_region_df = ''
-
 
 	### create output dict
-	output_dict = create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present)
+	output_dict = create_output_dict(gene_list, main_gene_df, main_genescreen_region_df, main_hotspot_region_df, sample_270_gaps_df, sample_135_gaps_df, genescreen_present, hotspots_present)
 
 
 	## export dict to JSON
