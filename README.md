@@ -40,3 +40,16 @@ To run all unit tests:
 - run `python -m unittest`
 
 To run tests on a specific script, follow the steps above but run `python -m unittest <test_script_name>`
+
+
+## Adding a new panel
+
+To add a new panel, the following needs to be changed:
+- Generate bed files for the new panel
+  - The `hotspot_variants/*bed` bed file and `hotspot_coverage/*combined.bed` files are required
+  - The `hotspot_coverage/*hotspots.bed` and `hotspot_coverage/*genescreen.bed` files are optional
+  - Filenames should be all lowercase
+- Add the referral reason to the samplesheet generator (see SOP in Qpulse) and make sure it matches the filename of the new bed files
+- Make sure that all regions in the new panel are covered in `vendorCaptureBed_100pad_updated.bed` (the bed file file used to generate the depth of coverage file)
+- Make a new panel object in the somatic varianrt database that matches the filename of the new bed files
+- Move the `hotspot_variants` folder into the somatic database `roi` folder
