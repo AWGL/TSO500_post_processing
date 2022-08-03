@@ -194,3 +194,6 @@ echo "End time:   $now" >> timings.txt
 set +u
 conda deactivate
 set -u
+
+# add marker for run complete
+touch run_complete.txt
