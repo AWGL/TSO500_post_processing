@@ -31,8 +31,8 @@ tumour_referrals="|".join(gene_list)
 sample_number=0
 
 for sample in sampleList:
+
     NTC_in_sample= ("NTC" in sample.upper())
-    #print(sample_number)
     if (NTC_in_sample==False):
 
         sample_table=samples_file[samples_file['Sample']==sample]
@@ -66,7 +66,7 @@ for sample in sampleList:
         if (sample_number!=0):
             sample_previous_number=sample_number-1
             sample_previous=sampleList[sample_previous_number]
-
+            
 	    # read in fusions file for previous sample and duplicate the gene for splice variants in the fusions column
             all_fusions_table_previous= pandas.read_csv("./Gathered_Results/Database/"+sample_previous+"_fusion_check.csv", sep=",")
             splice_fusion_previous=all_fusions_table_previous[(all_fusions_table_previous.type=="Splice")]
@@ -97,6 +97,7 @@ for sample in sampleList:
         fusion_list_previous=[]
         fusion_list_next=[]
         report=report[report["fusion"].str.contains(tumour_referrals)]
+
         if (len(report)>0):
             fusion_list1=report["fusion"].tolist()
 
@@ -170,7 +171,6 @@ for sample in sampleList:
         if (len_gene_list!=0):
 
             for gene in gene_list:
-
 
 	        # read in fusions file for sample referral and duplicate the gene for splice variants in the fusions column
 
@@ -260,11 +260,13 @@ for sample in sampleList:
                                 #create list containing the fusions with genes in both orders for sample after
                                 fusion_list_referral_next=fusion_list_referral_next1+fusion_list_referral_next2
 
+
                                 #compare the fusion list for the sample with the fusion list for the sample after. Label contamination as "yes" if any fusions match.
-                                for fusion_current_referral in fusion_list_referral_next:
+                                for fusion_current_referral in fusion_list_referral:
                                     for fusion_next_referral in fusion_list_referral_next:
-                                        if (fusion_next_referral==fusion_next_referral):
+                                        if (fusion_current_referral==fusion_next_referral):
                                             contamination_referral="Yes"
+
 
 
         #Replace the contamination values in the contamination dictionaries
