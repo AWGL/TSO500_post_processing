@@ -7,7 +7,7 @@ include dictionary to translate referral types
 import pandas
 
 
-# create referral dictionary
+# create referral dictionary - this is only for legacy panels, any new panels should be lower case and caught by the if/else below
 referral_dict  = {
     "colorectal": "Colorectal",
     "gist": "GIST",
@@ -40,7 +40,10 @@ table = table.drop(['Description'], axis=1)
 # create list of formatted referrals from dictionary
 referral_new = []
 for item in table['Referral_id']:
-	referral_new.append(referral_dict[item])
+	if item in referral_dict:
+		referral_new.append(referral_dict[item])
+	else:
+		referral_new.append(item)
 
 # add new referral column and drop old referral column
 table['Referral'] = referral_new
