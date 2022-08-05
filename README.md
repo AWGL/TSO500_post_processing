@@ -57,6 +57,6 @@ To add a new panel, the following needs to be changed:
 - Make sure that all regions in the new panel are covered in `vendorCaptureBed_100pad_updated.bed` (the bed file file used to generate the depth of coverage file)
 - Make sure that any flanking regions are added to the `TSO_extra_padding_chr.interval_list` file - Illumina bed file only goes +/- 2bp so this file contains the extra 3bp to make it +/- 5bp
 
-**Somatic variant database**
+**Somatic variant database:**
 - Make a new panel object in the somatic variant database that matches the filename of the new bed files (case sensitive)
-- Move the new variants bed file into the `roi/hotspot_variants` folder in the somatic database
+- Move the new variants bed file into the `roi/variant_calling` folder in the somatic database
