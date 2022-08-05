@@ -38,7 +38,7 @@ Additional checklist for pipeline updates (if applicable)
 - [ ] Has the pipeline version in the variables file been updated e.g. development > master
 - [ ] If the changes plausibly affect the sensitivity or other key performance metrics have these been tested and results recorded?
 - [ ] If the environment changes has this been deployed and tested in place?
-
+- [ ] If the referrals have been updated or new referrals have been added, has it been checked if the cosmic files also need updating?
 
 
 #### Name:
