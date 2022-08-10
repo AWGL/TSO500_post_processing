@@ -40,3 +40,23 @@ To run all unit tests:
 - run `python -m unittest`
 
 To run tests on a specific script, follow the steps above but run `python -m unittest <test_script_name>`
+
+
+## Adding a new DNA panel
+
+To add a new panel, the following needs to be changed:
+
+**Samplesheet generator:**
+- Add the referral reason to the samplesheet generator (see SOP in Qpulse) and make sure it matches the filename of the new bed files (case sensitive)
+
+**Pipeline:**
+- Generate bed files for the new panel
+  - The `hotspot_variants/*bed` bed file and `hotspot_coverage/*combined.bed` files are required
+  - The `hotspot_coverage/*hotspots.bed` and `hotspot_coverage/*genescreen.bed` files are optional
+  - Filenames should be all lowercase
+- Make sure that all regions in the new panel are covered in `vendorCaptureBed_100pad_updated.bed` (the bed file file used to generate the depth of coverage file)
+- Make sure that any flanking regions are added to the `TSO_extra_padding_chr.interval_list` file - Illumina bed file only goes +/- 2bp so this file contains the extra 3bp to make it +/- 5bp
+
+**Somatic variant database:**
+- Make a new panel object in the somatic variant database that matches the filename of the new bed files (case sensitive)
+- Move the new variants bed file into the `roi/variant_calling` folder in the somatic database
