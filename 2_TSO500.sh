@@ -348,9 +348,15 @@ if [ "$dna_or_rna" = "DNA" ]; then
         fi
     fi
 
+
+    #run samtools to get the number of reads in the bam file
+    if [[ -f ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam ]]; then
+        reads=$( samtools view -c ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam )
+
+
     # add to sample QC file
-    echo -e "Sample\tFastQC\tcompleted_all_steps\tcontamination_pass_fail\tcontamination_score\tcontamination_p_value\ttotal_pf_reads\tmedian_insert_size\tmedian_exon_coverage\tpct_exon_50x" > "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
-    echo -e "$sample_id\t$fastqc_status\t$completed_all_steps\t$contamination_pass_fail\t$contamination_score\t$contamination_p_value\t$total_pf_reads\t$median_insert_size\t$median_exon_coverage\t$pct_exon_50x" >> "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
+    echo -e "Sample\tFastQC\tcompleted_all_steps\tcontamination_pass_fail\tcontamination_score\tcontamination_p_value\ttotal_pf_reads\tmedian_insert_size\tmedian_exon_coverage\tpct_exon_50x\tReads" > "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
+    echo -e "$sample_id\t$fastqc_status\t$completed_all_steps\t$contamination_pass_fail\t$contamination_score\t$contamination_p_value\t$total_pf_reads\t$median_insert_size\t$median_exon_coverage\t$pct_exon_50x\t$reads" >> "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
 
 fi
 
