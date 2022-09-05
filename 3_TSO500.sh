@@ -182,16 +182,13 @@ done
 
 # run samtools to get the number of reads in each DNA sample
 
+echo -e "Sample\tReads">> reads_DNA.txt
+
 for sample in $(cat sample_list.txt); do
-
-if [[ -f ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam ]]; then
-
-reads=$( samtools view -c ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam )
-
-echo -e "$sample\t$reads" >> reads_DNA.txt
-
-fi
-
+    if [[ -f ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam ]]; then
+        reads=$( samtools view -c ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam )
+        echo -e "$sample\t$reads" >> reads_DNA.txt
+    fi
 done
 
 
