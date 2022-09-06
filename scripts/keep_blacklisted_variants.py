@@ -3,7 +3,7 @@ from pysam import VariantFile
 import decimal
 
 # set decimal to always round down
-decimal.getcontext().rounding = decimal.ROUND_DOWN
+decimal.getcontext().rounding = decimal.ROUND_HALF_DOWN
 
 # load in VCF and make pysam object. Must be gzipped and tabix indexed
 input_vcf = sys.argv[1]
