@@ -38,6 +38,7 @@ module purge
 module load singularity
 . ~/.bashrc
 module load anaconda
+module load htslib
 
 # catch fails early and terminate
 set -euo pipefail
@@ -171,6 +172,23 @@ gunzip "$output_folder"/"$sample_id"_MergedVariants_Annotated.json.gz
 
 # format extra variant calls with custom Python script
 python "$pipeline_scripts"/filter_extra_padding_variants.py "$output_folder"/"$sample_id"_MergedVariants_Annotated.json > "$output_folder"/"$sample_id"_extra_db.tsv
+
+# add variants that have been blacklisted but we want to see
+# vcf must be gzipped and tabix indexed
+set +u
+conda deactivate
+conda activate pysam
+set -u
+
+cp "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_MergedSmallVariants.genome.vcf "$output_folder"
+bgzip "$output_folder"/"$sample_id"_MergedSmallVariants.genome.vcf
+tabix "$output_folder"/"$sample_id"_MergedSmallVariants.genome.vcf.gz
+python "$pipeline_scripts"/keep_blacklisted_variants.py "$output_folder"/"$sample_id"_MergedSmallVariants.genome.vcf.gz >> "$output_folder"/"$sample_id"_extra_db.tsv
+
+set +u
+conda deactivate
+conda activate TSO500_post_processing
+set -u
 
 # concatenate extra calls to end of combined output
 cat "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput.tsv > "$SLURM_SUBMIT_DIR"/analysis/"$sample_id"/Results/"$sample_id"/"$sample_id"_CombinedVariantOutput_padding.tsv
