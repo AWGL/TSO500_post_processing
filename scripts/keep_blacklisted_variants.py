@@ -1,5 +1,9 @@
 import sys
 from pysam import VariantFile
+import decimal
+
+# set decimal to always round down
+decimal.getcontext().rounding = decimal.ROUND_DOWN
 
 # load in VCF and make pysam object. Must be gzipped and tabix indexed
 input_vcf = sys.argv[1]
@@ -71,8 +75,10 @@ for var in variants_to_keep:
             else:
                 base_changes_pass = False
 
-            # some should only be pulled through above a certain VAF, defined in config above. If not cutoff then config will be 0
-            vaf = rec.samples[0]['VF'][0]
+            # pull out VAF, make decimal and round to 4dp
+            vaf = decimal.Decimal(rec.samples[0]['VF'][0]).quantize(decimal.Decimal('0.0001'))
+
+            # some should only be pulled through above a certain VAF, defined in config above. If no cutoff then config will be 0
             if vaf > var['cutoff']:
                 vaf_pass = True
             else:
