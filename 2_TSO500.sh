@@ -260,32 +260,38 @@ if [ "$dna_or_rna" = "DNA" ]; then
 
         # parse referral - must be in DNA loop
         referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
+        gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
 
-        # only run bedtools intersect for certain referral types
-        if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+        # hotspot gaps file may be missing for some referrals
+        if [[ -f gaps_file ]]
         then
+
+            # only run bedtools intersect for certain referral types
+            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+            then
 	
-            gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
-            dos2unix $gaps_file
+                dos2unix $gaps_file
 
-            #find the overlap between the hotspots file and the referral file from cosmic
-            bedtools intersect \
-              -loj \
-              -F 1 \
-              -a $gaps_file \
-              -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
-              -wao \
-            > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
+                # find the overlap between the hotspots file and the referral file from cosmic
+                bedtools intersect \
+                  -loj \
+                  -F 1 \
+                  -a $gaps_file \
+                  -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
+                  -wao \
+                > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
 
+            fi
+
+            # filter the output 
+            python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py \
+              --sampleId $sample_id \
+              --referral $referral \
+              --gaps_path "$depth_path"/"$hscov_outdir"/ \
+              --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
+        
         fi
-
-        #filter the output 
-        python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py \
-          --sampleId $sample_id \
-          --referral $referral \
-          --gaps_path "$depth_path"/"$hscov_outdir"/ \
-          --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
-            
+    
         # deactivate env
         set +u
         conda deactivate
