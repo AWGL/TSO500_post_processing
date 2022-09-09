@@ -263,7 +263,7 @@ if [ "$dna_or_rna" = "DNA" ]; then
         gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
 
         # hotspot gaps file may be missing for some referrals
-        if [[ -f gaps_file ]]
+        if [[ -f $gaps_file ]]
         then
 
             # only run bedtools intersect for certain referral types
