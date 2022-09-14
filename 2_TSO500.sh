@@ -267,9 +267,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
         then
 
             # only run bedtools intersect for certain referral types
-            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ] || [ $referral = "breast" ]
             then
-	
                 dos2unix $gaps_file
 
                 # find the overlap between the hotspots file and the referral file from cosmic
