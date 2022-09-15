@@ -350,9 +350,11 @@ if [ "$dna_or_rna" = "DNA" ]; then
 
 
     #run samtools to get the number of reads in the bam file
-    if [[ -f ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam ]]; then
-        reads=$( samtools view -c ./analysis/"$sample"/Logs_Intermediates/StitchedRealigned/"$sample"/"$sample".bam )
-
+    if [[ -f ./analysis/"$sample_id"/Logs_Intermediates/StitchedRealigned/"$sample_id"/"$sample_id".bam ]]; then
+        reads=$( samtools view -c ./analysis/"$sample_id"/Logs_Intermediates/StitchedRealigned/"$sample_id"/"$sample_id".bam )
+    else
+        reads="NA"
+    fi
 
     # add to sample QC file
     echo -e "Sample\tFastQC\tcompleted_all_steps\tcontamination_pass_fail\tcontamination_score\tcontamination_p_value\ttotal_pf_reads\tmedian_insert_size\tmedian_exon_coverage\tpct_exon_50x\tAligned_reads" > "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
