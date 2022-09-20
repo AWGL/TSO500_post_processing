@@ -132,7 +132,8 @@ set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
-sbatch ../TSO500_DNA_nextflow.sh /data/output/results/${runid}/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+#NEED TO UPDATE TO MASTER WHEN GOING LIVE
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-sophie_update/TSO500_DNA_nextflow.sh /data/output/results/${runid}/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
 set +u
 conda deactivate
