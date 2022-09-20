@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.6
+# Version:     1.0.7
 
 
 ##############################################################################################
@@ -104,14 +104,53 @@ dos2unix SampleSheet_updated.csv
 #  Kick off script 2
 ##############################################################################################
 
-# kick off script 2 for each sample
-cat sample_list.txt | while read line; do
+#Take DNA FastQ and move to new folder
+mkdir DNA_Analysis
+#Copy samples_correct_order file
+cp samples_correct_order_*_DNA.csv ./DNA_Analysis
 
-    echo kicking off pipeline for $line
+cd DNA_Analysis
+mkdir Raw_Reads
+while read samples
+do
+    sampleID=$(echo ${samples} | cut -f 1 -d ",")
+    cp -r ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/ ./Raw_Reads
+    #Combine L001 and L002 to a single fastq file
+    cat Raw_Reads/${sampleID}/${sampleID}_S*_L001_R1_001.fastq.gz Raw_Reads/${sampleID}/${sampleID}_S*_L002_R1_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R1.fastq.gz
+    cat Raw_Reads/${sampleID}/${sampleID}_S*_L001_R2_001.fastq.gz Raw_Reads/${sampleID}/${sampleID}_S*_L002_R2_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R2.fastq.gz
+    #remove the original files as not needed
+    rm Raw_Reads/${sampleID}/${sampleID}_*L00*
+done < samples_correct_order_*_DNA.csv
+
+#Get RUN ID
+runid=$(basename "$raw_data")
+
+set +u
+conda deactivate
+conda activate ctDNA
+set -u
+
+#Kick off nextflow
+echo "Kicking off DNA Nextflow"
+sbatch ../TSO500_DNA_nextflow.sh /data/output/results/${runid}/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+
+set +u
+conda deactivate
+conda activate TSO500_post_processing
+set -u
+
+#For RNA samples, kick off script 2
+cd ../
+
+# kick off script 2 for each sample
+cat samples_correct_order*_RNA.csv | while read line; do
+
+    sample_id=$(echo ${line} | cut -f 1 -d ",")
+    echo kicking off pipeline for $sample_id
     sbatch \
-      --export=raw_data="$raw_data",sample_id="$line" \
-      --output="$line"_2_TSO500-%j-%N.out \
-      --error="$line"_2_TSO500-%j-%N.err \
+      --export=raw_data="$raw_data",sample_id="$sample_id" \
+      --output="$sample_id"_2_TSO500-%j-%N.out \
+      --error="$sample_id"_2_TSO500-%j-%N.err \
       2_TSO500.sh
 
 done

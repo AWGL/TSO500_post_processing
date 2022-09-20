@@ -11,7 +11,7 @@
 #              off script 3 when all samples completed
 # Use:         from /Output/results/<run_id> directory, for each sample run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.6
+# Version:     1.0.7
 
 
 ##############################################################################################
@@ -384,7 +384,7 @@ fi
 echo $sample_id >> completed_samples.txt
 
 # only run once all samples have finished
-expected=$(cat sample_list.txt| wc -l)
+expected=$(cat samples_correct_order_*_RNA.csv | wc -l)
 complete=$(cat completed_samples.txt | wc -l)
 
 # if last sample, kick off script 3
