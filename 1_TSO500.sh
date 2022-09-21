@@ -127,7 +127,7 @@ runid=$(basename "$raw_data")
 
 set +u
 conda deactivate
-conda activate ctDNA
+conda activate somatic_enrichment_nextflow
 set -u
 
 #Kick off nextflow

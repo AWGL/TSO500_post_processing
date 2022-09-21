@@ -20,10 +20,10 @@ SEQID=$3
 #####################################################################
 
 #set +u
-#conda activate ctDNA
+#conda activate somatic_enrichment_nextflow
 #set -u
 
-nextflow -C /data/diagnostics/pipelines/ctDNA/config/ctDNA/ctDNA-development/ctDNA.config run /data/diagnostics/pipelines/ctDNA/ctDNA-development/ctDNA.nf \
+nextflow -C /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-development/config/somatic_enrichment_nextflow.config run /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-development/somatic_enrichment_nextflow.nf \
     --fastqs ${FASTQ_PATH}/\*/\*\{R1.fastq.gz,R2.fastq.gz\} \
     --dna_list ${SAMPLES_ORDER} \
     --publish_dir results \
@@ -32,4 +32,4 @@ nextflow -C /data/diagnostics/pipelines/ctDNA/config/ctDNA/ctDNA-development/ctD
     -with-report ${SEQID}.html \
     -work-dir work &> pipeline.log
 
-rm -r work
+rm -r worK
