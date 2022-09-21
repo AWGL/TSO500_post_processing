@@ -23,7 +23,7 @@ SEQID=$3
 #conda activate ctDNA
 #set -u
 
-nextflow -C /data/diagnostics/pipelines/ctDNA/config/ctDNA/ctDNA.config run /data/diagnostics/pipelines/ctDNA/ctDNA.nf \
+nextflow -C /data/diagnostics/pipelines/ctDNA/config/ctDNA/ctDNA-development/ctDNA.config run /data/diagnostics/pipelines/ctDNA/ctDNA-development/ctDNA.nf \
     --fastqs ${FASTQ_PATH}/\*/\*\{R1.fastq.gz,R2.fastq.gz\} \
     --dna_list ${SAMPLES_ORDER} \
     --publish_dir results \
