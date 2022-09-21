@@ -32,4 +32,4 @@ nextflow -C /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enri
     -with-report ${SEQID}.html \
     -work-dir work &> pipeline.log
 
-rm -r worK
+rm -r work
