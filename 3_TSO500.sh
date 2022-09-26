@@ -41,23 +41,6 @@ module load anaconda
 set -euo pipefail
 
 
-##############################################################################################
-#  Illumina app
-##############################################################################################
-
-samples_to_gather=$(python $pipeline_scripts/gather_list.py $SLURM_SUBMIT_DIR/samples_correct_order_*_RNA.csv $SLURM_SUBMIT_DIR)
-
-# make sure to use singularity flag
-$app_dir/TruSight_Oncology_500_RUO.sh \
-  --analysisFolder Gathered_Results \
-  --resourcesFolder $app_dir/resources \
-  --runFolder $raw_data \
-  --isNovaSeq \
-  --sampleSheet "$raw_data"/SampleSheet.csv \
-  --engine singularity \
-  --gather $samples_to_gather
-
-
 # activate conda env
 set +u
 conda activate TSO500_post_processing
@@ -84,15 +67,15 @@ for worksheet_id in $(cat worksheets_rna.txt); do
         sample_reads=$(tail -n1 analysis/"$sample"/"$sample"_RNA_QC.txt | cut -f5)
 
         # *AllFusions file isn't made if the app doesnt finish, make a blank one instead
-        if [[ ! -f ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv ]]; then
+        if [[ ! -f ./analysis/"$sample"/Results/"$sample"/"$sample"_AllFusions.csv ]]; then
             echo "fusion,exons,reference_reads_1,reference_reads_2,fusion_supporting_reads,left_breakpoint,right_breakpoint,type,in_ntc,spanning_reads,spanning_reads_dedup,split_reads,split_reads_dedup,fusion_caller,fusion_score" > ./Gathered_Results/Database/"$sample"_fusion_check.csv
 
         # if app completes properly, format fusions for database upload
         else
             python "$pipeline_scripts"/fusions2db.py \
-              --tsvfile ./Gathered_Results/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
-              --ntcfile ./Gathered_Results/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
-              --allfusions ./Gathered_Results/Results/"$sample"/"$sample"_AllFusions.csv \
+              --tsvfile ./analysis/"$sample"/Results/"$sample"/"$sample"_CombinedVariantOutput.tsv \
+              --ntcfile ./analysis/NTC-"$worksheet_id"/Results/NTC-"$worksheet_id"/NTC-"$worksheet_id"_CombinedVariantOutput.tsv \
+              --allfusions ./analysis/"$sample"/Results/"$sample"/"$sample"_AllFusions.csv \
               --outfile ./Gathered_Results/Database/
         fi
 
