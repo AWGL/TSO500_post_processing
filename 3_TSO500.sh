@@ -179,6 +179,7 @@ for worksheet_id in $(cat worksheets_rna.txt); do
     python "$pipeline_scripts"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
 done
 
+
 # move sample log files into their own folders
 for sample in $(cat sample_list.txt)
 do
