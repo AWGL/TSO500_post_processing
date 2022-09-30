@@ -10,7 +10,7 @@
 #              end as NTC is required)
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 3_TSO500.sh
-# Version:     1.0.6
+# Version:     1.0.7
 
 
 ##############################################################################################
@@ -178,7 +178,6 @@ done
 for worksheet_id in $(cat worksheets_rna.txt); do
     python "$pipeline_scripts"/contamination_TSO500.py "$worksheet_id" "$pipeline_version"
 done
-
 
 # move sample log files into their own folders
 for sample in $(cat sample_list.txt)
