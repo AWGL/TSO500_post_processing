@@ -258,6 +258,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
         conda activate TSO500_post_processing
         set -u
 
+        cosmic_tool_path=/data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master
+
         # parse referral - must be in DNA loop
         referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
         gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
@@ -267,9 +269,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
         then
 
             # only run bedtools intersect for certain referral types
-            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ] || [ $referral = "breast" ]
             then
-	
                 dos2unix $gaps_file
 
                 # find the overlap between the hotspots file and the referral file from cosmic
@@ -277,18 +278,18 @@ if [ "$dna_or_rna" = "DNA" ]; then
                   -loj \
                   -F 1 \
                   -a $gaps_file \
-                  -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
+                  -b "$cosmic_tool_path"/cosmic_bedfiles/"$referral".bed \
                   -wao \
                 > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
 
             fi
 
             # filter the output 
-            python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py \
+            python "$cosmic_tool_path"/filter_table.py \
               --sampleId $sample_id \
               --referral $referral \
               --gaps_path "$depth_path"/"$hscov_outdir"/ \
-              --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
+              --bedfile_path "$cosmic_tool_path"/cosmic_bedfiles/
         
         fi
     
