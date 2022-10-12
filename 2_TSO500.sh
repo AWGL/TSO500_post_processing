@@ -11,7 +11,7 @@
 #              off script 3 when all samples completed
 # Use:         from /Output/results/<run_id> directory, for each sample run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.7
+# Version:     1.0.8
 
 
 ##############################################################################################
