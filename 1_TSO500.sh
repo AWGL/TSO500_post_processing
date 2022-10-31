@@ -104,6 +104,19 @@ dos2unix SampleSheet_updated.csv
 #  Kick off script 2
 ##############################################################################################
 
+#For RNA samples, kick off script 2 for each sample
+cat samples_correct_order*_RNA.csv | while read line; do
+
+    sample_id=$(echo ${line} | cut -f 1 -d ",")
+    echo kicking off pipeline for $sample_id
+    sbatch \
+      --export=raw_data="$raw_data",sample_id="$sample_id" \
+      --output="$sample_id"_2_TSO500-%j-%N.out \
+      --error="$sample_id"_2_TSO500-%j-%N.err \
+      2_TSO500.sh
+
+done
+
 #Take DNA FastQ and move to new folder
 mkdir DNA_Analysis
 #Copy samples_correct_order file
@@ -135,28 +148,6 @@ echo "Kicking off DNA Nextflow"
 #NEED TO UPDATE TO MASTER WHEN GOING LIVE
 sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-sophie_update/TSO500_DNA_nextflow.sh /data/output/results/${runid}/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
-set +u
-conda deactivate
-conda activate TSO500_post_processing
-set -u
-
-#For RNA samples, kick off script 2
-cd ../
-
-# kick off script 2 for each sample
-cat samples_correct_order*_RNA.csv | while read line; do
-
-    sample_id=$(echo ${line} | cut -f 1 -d ",")
-    echo kicking off pipeline for $sample_id
-    sbatch \
-      --export=raw_data="$raw_data",sample_id="$sample_id" \
-      --output="$sample_id"_2_TSO500-%j-%N.out \
-      --error="$sample_id"_2_TSO500-%j-%N.err \
-      2_TSO500.sh
-
-done
-
-# deactivate env
 set +u
 conda deactivate
 set -u
