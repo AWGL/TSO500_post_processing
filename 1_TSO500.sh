@@ -104,18 +104,20 @@ dos2unix SampleSheet_updated.csv
 #  Kick off script 2
 ##############################################################################################
 
-#For RNA samples, kick off script 2 for each sample
-cat samples_correct_order*_RNA.csv | while read line; do
+#For RNA samples, kick off script 2 for each sample, firstly checking that there is an RNA worksheet
+if [ -f "samples_correct_order*_RNA.csv"];
+then
+	cat samples_correct_order*_RNA.csv | while read line; do
 
-    sample_id=$(echo ${line} | cut -f 1 -d ",")
-    echo kicking off pipeline for $sample_id
-    sbatch \
-      --export=raw_data="$raw_data",sample_id="$sample_id" \
-      --output="$sample_id"_2_TSO500-%j-%N.out \
-      --error="$sample_id"_2_TSO500-%j-%N.err \
-      2_TSO500.sh
-
-done
+	    sample_id=$(echo ${line} | cut -f 1 -d ",")
+	    echo kicking off pipeline for $sample_id
+	    sbatch \
+	      --export=raw_data="$raw_data",sample_id="$sample_id" \
+	      --output="$sample_id"_2_TSO500-%j-%N.out \
+	      --error="$sample_id"_2_TSO500-%j-%N.err \
+	      2_TSO500.sh
+	done
+fi
 
 #Take DNA FastQ and move to new folder
 mkdir DNA_Analysis
