@@ -105,7 +105,9 @@ dos2unix SampleSheet_updated.csv
 ##############################################################################################
 
 #For RNA samples, kick off script 2 for each sample, firstly checking that there is an RNA worksheet
-if [ -f "samples_correct_order*_RNA.csv"];
+for file in *samples_correct_order*_RNA.csv*;
+do
+if [ -f "$file" ];
 then
 	cat samples_correct_order*_RNA.csv | while read line; do
 
@@ -118,6 +120,7 @@ then
 	      2_TSO500.sh
 	done
 fi
+done
 
 #Take DNA FastQ and move to new folder
 mkdir DNA_Analysis
