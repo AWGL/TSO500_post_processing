@@ -432,7 +432,7 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 					# bed2hgvs doesnt work for POLE
 					if key == 'POLE':
 						hgvs_c = item[3].split(':')[1]
-						filtered_135_gaps_list.append([item[0], item[1], item[2], f'POLE(NM006231.3):{hgvs_c}', item[4]])
+						filtered_135_gaps_list.append([item[0], item[1], item[2], f'POLE(NM_006231.3):{hgvs_c}', item[4]])
 
 					# check if gene is the gene in the 4th column then add
 					if key == item[3].split('(')[0]:
@@ -449,7 +449,7 @@ def create_output_dict(gene_list, main_gene_df, genescreen_region_df, hotspots_r
 					# bed2hgvs doesnt work for POLE
 					if key == 'POLE':
 						hgvs_c = item[3].split(':')[1]
-						filtered_270_gaps_list.append([item[0], item[1], item[2], f'POLE(NM006231.3):{hgvs_c}', item[4]])
+						filtered_270_gaps_list.append([item[0], item[1], item[2], f'POLE(NM_006231.3):{hgvs_c}', item[4]])
 
 					# check if gene is the gene in the 4th column then add
 					if key == item[3].split('(')[0]:
