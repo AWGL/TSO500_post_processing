@@ -40,7 +40,7 @@ for var in y['positions']:
                 keep = False
 
                 # weird transcripts
-                if transcript['transcript'] in ['NM_000141.4', 'NM_000142.4', 'NM_175629.2', 'NM_001122607.1']:
+                if transcript['transcript'] in ['NM_000141.4', 'NM_000142.4', 'NM_153759.3', 'NM_001122607.1']:
                     keep = True
 
                 # padding variants
