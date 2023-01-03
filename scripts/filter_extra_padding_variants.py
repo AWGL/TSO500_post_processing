@@ -35,39 +35,51 @@ for var in y['positions']:
 
             # transcript specific info - use canonical refseq
             for transcript in variant['transcripts']:
+
+                # variable to decide whether or not to keep a variant
+                keep = False
+
+                # weird transcripts
+                if transcript['transcript'] in ['NM_000141.4', 'NM_000142.4', 'NM_153759.3', 'NM_001122607.1']:
+                    keep = True
+
+                # padding variants
                 if transcript['source'] == 'RefSeq' and 'isCanonical' in transcript.keys():
                     if transcript['isCanonical']:
+                        keep = True
 
-                        # keys are only present in JSON if they're not empty
-                        if 'hgnc' in transcript.keys():
-                            gene = transcript['hgnc']
-                        else:
-                            gene = ''
+                # output any variants to keep into the output list
+                if keep:
+                    # keys are only present in JSON if they're not empty
+                    if 'hgnc' in transcript.keys():
+                        gene = transcript['hgnc']
+                    else:
+                        gene = ''
 
-                        if 'hgvsp' in transcript.keys():
-                            hgvs_p = transcript['hgvsp']
-                        else:
-                            hgvs_p = ''
+                    if 'hgvsp' in transcript.keys():
+                        hgvs_p = transcript['hgvsp']
+                    else:
+                        hgvs_p = ''
 
-                        if 'hgvsc' in transcript.keys():
-                            hgvs_c = transcript['hgvsc']
-                        else:
-                            hgvs_c = ''
+                    if 'hgvsc' in transcript.keys():
+                        hgvs_c = transcript['hgvsc']
+                    else:
+                        hgvs_c = ''
 
-                        if 'consequence' in transcript.keys():
-                            csq = ':'.join(transcript['consequence'])
-                        else:
-                            csq = ''
+                    if 'consequence' in transcript.keys():
+                        csq = ':'.join(transcript['consequence'])
+                    else:
+                        csq = ''
 
-                        if 'exon' in transcript.keys():
-                            exon = transcript['exon']
-                        else:
-                            exon = ''
+                    if 'exon' in transcript.keys():
+                        exon = transcript['exon']
+                    else:
+                        exon = ''
 
-                        # add to variant list
-                        out_list.append(
-                            [gene, chr, pos, ref, alt, str(vaf), str(depth), hgvs_p, hgvs_c, csq, exon]
-                        )
+                    # add to variant list
+                    out_list.append(
+                        [gene, chr, pos, ref, alt, str(vaf), str(depth), hgvs_p, hgvs_c, csq, exon]
+                    )
 
 
 
