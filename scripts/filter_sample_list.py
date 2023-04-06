@@ -4,10 +4,14 @@ include dictionary to translate referral types
 
 """
 
-import pandas
+#Open sample sheet
+SAMPLESHEET = open('SampleSheet_updated.csv','r')
+
+#Open sample_list.txt to write to
+SAMPLELIST = open('sample_list.txt','w')
 
 
-# create referral dictionary - this is only for legacy panels, any new panels should be lower case and caught by the if/else below
+# create referral dictionary - this is only for legacy panels, any new panels should be lower case
 referral_dict  = {
     "colorectal": "Colorectal",
     "gist": "GIST",
@@ -20,63 +24,61 @@ referral_dict  = {
     "null": "null",
 }
 
+#Sets for worksheet ids
+dna = set()
+rna = set()
 
-# load in truncated samplesheet
-table = pandas.read_csv('SampleSheet_updated.csv', sep=',')
+#Go through samplesheet until you hit the header lines
+for line in SAMPLESHEET:
+	
+	#Remove new line character
+	line = line.strip()
 
-# save sample list
-sample_list = table['Sample_ID']
-sample_list.to_csv('sample_list.txt', index=False, header=False)
+	#Skip if header line
+	if line.startswith('Sample'):
+		
+		next
 
-# filter table to only include columns below
-table = table[['Sample_ID', 'Sample_Plate','Sample_Type', 'Description']]
-
-# parse referral from description field
-table['Referral_value'] = table['Description'].str.split(';', expand=True)[2]
-table['Referral_id'] = table.Referral_value.str.split('=',expand=True)[1]
-table = table.drop(['Referral_value'], axis=1)
-table = table.drop(['Description'], axis=1)
-
-# create list of formatted referrals from dictionary
-referral_new = []
-for item in table['Referral_id']:
-	if item in referral_dict:
-		referral_new.append(referral_dict[item])
 	else:
-		referral_new.append(item)
+		
+		#Split line into list
+		line = line.split(",")
 
-# add new referral column and drop old referral column
-table['Referral'] = referral_new
-table = table.drop(['Referral_id'], axis=1)
+		#Append Sample ID (first element in list) to sample list
+		SAMPLELIST.write(line[0]+"\n")
 
-# subset all DNA samples
-table_dna = table[table['Sample_Type'] == 'DNA']
-worksheets_dna = table_dna['Sample_Plate'].unique()
+		#Get referral from Description (tenth element in list), split by ; and get third element
+		referral = line[9].split(";")[2]
+		referral = referral.split("=")[1]
 
-# save a list of DNA worksheets
-with open('worksheets_dna.txt','w') as worksheets_file_dna:
-	for worksheet in worksheets_dna:
-		worksheets_file_dna.write(worksheet)
-		worksheets_file_dna.write('\n')
+		#if RNA, update referral based on dictionary
+		if line[7]== "RNA" and (referral in referral_dict):
+	
+			referral = referral_dict[referral]
+		
+		#Add worksheet to set
+		if line[7] == "DNA":
+			dna.add(line[2])
 
-# save one list per worksheet with all samples plus worksheet and referral info
-for worksheet in worksheets_dna:
-	table_dna_worksheet = table_dna
-	table_dna_worksheet = table_dna[table_dna['Sample_Plate'] == worksheet]
-	table_dna_worksheet.to_csv(f'samples_correct_order_{worksheet}_DNA.csv', index=False, header=False)
+		elif line[7] == "RNA":
+			rna.add(line[2])
 
-# subset all RNA samples
-table_rna = table[table['Sample_Type'] == 'RNA']
-worksheets_rna = table_rna['Sample_Plate'].unique()
+		#Write to samples correct order
+		SAMPLESCORRECT = open('samples_correct_order_'+line[2]+"_"+line[7]+".csv",'a')
+		
+		SAMPLESCORRECT.write(line[0]+","+line[2]+","+line[7]+","+referral+"\n")
+		
+		SAMPLESCORRECT.close()
 
-# save a list of RNA worksheets
-with open('worksheets_rna.txt','w') as worksheets_file_rna:
-	for worksheet in worksheets_rna:
-		worksheets_file_rna.write(worksheet)
-		worksheets_file_rna.write('\n')
+#Write out worksheets to file
+with open('worksheets_dna.txt','w') as f:
+	for ws in dna:
+		f.write(ws+"\n")
 
-# save one list per worksheet with all samples plus worksheet and referral info
-for worksheet in worksheets_rna:
-	table_rna_worksheet = table_rna
-	table_rna_worksheet = table_rna[table_rna['Sample_Plate'] == worksheet]
-	table_rna_worksheet.to_csv(f'samples_correct_order_{worksheet}_RNA.csv', index=False, header=False)
+with open('worksheets_rna.txt','w') as f:
+	for ws in rna:
+		f.write(ws+"\n")
+
+SAMPLESHEET.close()
+SAMPLELIST.close()
+
