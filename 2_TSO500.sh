@@ -11,7 +11,8 @@
 #              off script 3 when all samples completed
 # Use:         from /Output/results/<run_id> directory, for each sample run: 
 #              sbatch --export=raw_data=/data/archive/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.7
+
+# Version:     1.0.11
 
 
 ##############################################################################################
@@ -258,6 +259,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
         conda activate TSO500_post_processing
         set -u
 
+        cosmic_tool_path=/data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master
+
         # parse referral - must be in DNA loop
         referral=$(grep "$sample_id" samples_correct_order_"$worksheet"_DNA.csv | cut -d, -f4)
         gaps_file="$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_hotspots.gaps
@@ -267,9 +270,8 @@ if [ "$dna_or_rna" = "DNA" ]; then
         then
 
             # only run bedtools intersect for certain referral types
-            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ]
+            if [ $referral = "Melanoma" ] ||  [ $referral = "Lung" ] || [ $referral = "Colorectal" ] || [ $referral = "GIST" ] || [ $referral = "breast" ]
             then
-	
                 dos2unix $gaps_file
 
                 # find the overlap between the hotspots file and the referral file from cosmic
@@ -277,18 +279,18 @@ if [ "$dna_or_rna" = "DNA" ]; then
                   -loj \
                   -F 1 \
                   -a $gaps_file \
-                  -b /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/"$referral".bed \
+                  -b "$cosmic_tool_path"/cosmic_bedfiles/"$referral".bed \
                   -wao \
                 > "$depth_path"/"$hscov_outdir"/"$sample_id"_"$referral"_intersect.txt
 
             fi
 
             # filter the output 
-            python /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/filter_table.py \
+            python "$cosmic_tool_path"/filter_table.py \
               --sampleId $sample_id \
               --referral $referral \
               --gaps_path "$depth_path"/"$hscov_outdir"/ \
-              --bedfile_path /data/diagnostics/apps/cosmic_gaps/cosmic_gaps-master/cosmic_bedfiles/
+              --bedfile_path "$cosmic_tool_path"/cosmic_bedfiles/
         
         fi
     
@@ -354,9 +356,17 @@ if [ "$dna_or_rna" = "DNA" ]; then
         fi
     fi
 
+
+    #run samtools to get the number of reads in the bam file
+    if [[ -f ./analysis/"$sample_id"/Logs_Intermediates/StitchedRealigned/"$sample_id"/"$sample_id".bam ]]; then
+        reads=$( samtools view -c ./analysis/"$sample_id"/Logs_Intermediates/StitchedRealigned/"$sample_id"/"$sample_id".bam )
+    else
+        reads="NA"
+    fi
+
     # add to sample QC file
-    echo -e "Sample\tFastQC\tcompleted_all_steps\tcontamination_pass_fail\tcontamination_score\tcontamination_p_value\ttotal_pf_reads\tmedian_insert_size\tmedian_exon_coverage\tpct_exon_50x" > "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
-    echo -e "$sample_id\t$fastqc_status\t$completed_all_steps\t$contamination_pass_fail\t$contamination_score\t$contamination_p_value\t$total_pf_reads\t$median_insert_size\t$median_exon_coverage\t$pct_exon_50x" >> "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
+    echo -e "Sample\tFastQC\tcompleted_all_steps\tcontamination_pass_fail\tcontamination_score\tcontamination_p_value\ttotal_pf_reads\tmedian_insert_size\tmedian_exon_coverage\tpct_exon_50x\tAligned_reads" > "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
+    echo -e "$sample_id\t$fastqc_status\t$completed_all_steps\t$contamination_pass_fail\t$contamination_score\t$contamination_p_value\t$total_pf_reads\t$median_insert_size\t$median_exon_coverage\t$pct_exon_50x\t$reads" >> "$output_path"/"$sample_id"_"$dna_or_rna"_QC.txt
 
 fi
 
