@@ -9,7 +9,7 @@
 # Description: Combine all sample results and generate database input (must be run at the 
 #              end as NTC is required)
 # Use:         from /Output/results/<run_id> directory, run: 
-#              sbatch --export=raw_data=/data/archive/novaseq/<run_id> 3_TSO500.sh
+#              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 3_TSO500.sh
 # Version:     1.0.10
 
 
