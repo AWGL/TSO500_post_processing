@@ -82,7 +82,9 @@ else
 	do
 
 		depth_path="${output_path}/reanalysis/${s_id}/depth_of_coverage/"
-		mkdir $depth_path
+		mkdir ${output_path}/reanalysis
+		mkdir ${output_path}/reanalysis/${s_id}
+		mkdir ${output_path}/reanalysis/${s_id}/depth_of_coverage/
 
 		# reheader the bams to local area
 		java -jar /Apps/wren/picard/2.21.6/bin/picard.jar AddOrReplaceReadGroups \
