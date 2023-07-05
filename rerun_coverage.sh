@@ -70,7 +70,7 @@ then
 		--referral "$referral" \
 		--groups_folder "$pipeline_dir"/hotspot_coverage/ \
 		--sample_coverage "$analysis_path"/"$sample"/depth_of_coverage/ \
-		--ntc_coverage analysis/NTC-"$worksheet_id"/depth_of_coverage/ \
+		--ntc_coverage "$analysis_path"/NTC-"$worksheet_id"/depth_of_coverage/ \
 		--outfile "$output_path"/Gathered_Results/Database/"$sample"_"$referral"_coverage.json	
 
 else
