@@ -73,6 +73,10 @@ then
 		--ntc_coverage "$analysis_path"/NTC-"$worksheet_id"/depth_of_coverage/ \
 		--outfile "$output_path"/Gathered_Results/Database/"$sample"_"$referral"_coverage.json	
 
+	#Make new samplelist for upload
+	echo "${sample},${worksheet_id},DNA,$referral" > ${output_path}/Gathered_Results/Database/samples_database_${worksheet_id}_DNA_rereferral.csv
+	
+
 else
 
 	bam_path="${output_path}/BAMs/"
@@ -240,6 +244,9 @@ else
 					--bedfile_path "$cosmic_tool_path"/cosmic_bedfiles/
         
 			fi
+
+			#Remove copy of bam with read groups and index
+			rm "$bam_path"/"$s_id"_add_rg.bam*
 		done
 	done
 
@@ -249,6 +256,9 @@ else
 		--sample_coverage "$output_path"/reanalysis/"$sample"/depth_of_coverage/ \
 		--ntc_coverage "$output_path"/reanalysis/NTC-"$worksheet_id"/depth_of_coverage/ \
 		--outfile "$output_path"/Gathered_Results/Database/"$sample"_"$referral"_coverage.json
+
+	#Make new samplelist for upload
+	echo "${sample},${worksheet_id},DNA,$referral" > ${output_path}/Gathered_Results/Database/samples_database_${worksheet_id}_DNA_rereferral.csv
 fi
 
 # deactivate env
