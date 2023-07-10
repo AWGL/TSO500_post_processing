@@ -16,6 +16,14 @@ From this folder run the command:
 
 The raw data directory must contain the SampleSheet.csv. 
 
+## To re-run DNA samples with a new referral
+
+The script rerun_coverage.sh allows the coverage json file to be produced for a DNA sample with a new referral in all scenarios (analysis/ folder present or deleted). This can be run as follows, as transfer, from any location:
+
+`sbatch rerun_coverage.sh <run_id> <sample_id> <worksheet> <new referral>`
+
+The new coverage file will then be present in Gathered_Results/Database/ alongside a new samples list file for upload to the database.
+
 ## Duty scientist responsibilites
 The duty scientist is responsible for the following tasks:
 * Creating the TSO500 samplesheet- see below for requirements
