@@ -10,7 +10,7 @@
 #              end as NTC is required)
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 3_TSO500.sh
-# Version:     1.0.11
+# Version:     1.0.13
 
 ##############################################################################################
 #  Setup

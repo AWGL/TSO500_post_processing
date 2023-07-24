@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id> directory, run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.11
+# Version:     1.0.13
 
 ##############################################################################################
 #  Setup
@@ -132,12 +132,10 @@ mkdir Raw_Reads
 while read samples
 do
     sampleID=$(echo ${samples} | cut -f 1 -d ",")
-    cp -r ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/ ./Raw_Reads
-    #Combine L001 and L002 to a single fastq file
-    cat Raw_Reads/${sampleID}/${sampleID}_S*_L001_R1_001.fastq.gz Raw_Reads/${sampleID}/${sampleID}_S*_L002_R1_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R1.fastq.gz
-    cat Raw_Reads/${sampleID}/${sampleID}_S*_L001_R2_001.fastq.gz Raw_Reads/${sampleID}/${sampleID}_S*_L002_R2_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R2.fastq.gz
-    #remove the original files as not needed
-    rm Raw_Reads/${sampleID}/${sampleID}_*L00*
+    #Combine L001 to a single fastq file
+    cat ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L001_R1_001.fastq.gz ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L002_R1_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R1.fastq.gz
+    #Combine L002 to a single fastq file
+    cat ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L001_R2_001.fastq.gz ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L002_R2_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R2.fastq.gz
 done < samples_correct_order_*_DNA.csv
 
 #Get RUN ID
