@@ -45,10 +45,10 @@ for line in samplesheet:
 		line = line.split(",")
 
 		#Get columns we need from sample sheet
-		line[0] = sample_id
-		line[2] = worksheet
-		line[7] = sample_type
-		line[9] = description
+		sample_id = line[0]
+		worksheet = line[2]
+		sample_type = line[7]
+		description = line[9]
 
 		#Append Sample ID (first element in list) to sample list
 		samplelist.write(sample_id+"\n")
