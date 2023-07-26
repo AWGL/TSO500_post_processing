@@ -132,6 +132,7 @@ mkdir Raw_Reads
 while read samples
 do
     sampleID=$(echo ${samples} | cut -f 1 -d ",")
+    mkdir Raw_Reads/${sampleID}/
     #Combine L001 to a single fastq file
     cat ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L001_R1_001.fastq.gz ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L002_R1_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R1.fastq.gz
     #Combine L002 to a single fastq file
