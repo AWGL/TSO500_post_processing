@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=24
 
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
-# Use:         from /Output/results/<run_id> directory, run: 
+# Use:         from /Output/results/<run_id>/TSO500/ directory, run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 1_TSO500.sh
 # Version:     1.0.13
 
@@ -150,7 +150,7 @@ set -u
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
 #NEED TO UPDATE TO MASTER WHEN GOING LIVE
-sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-sophie_update/TSO500_DNA_nextflow.sh /data/output/results/${runid}/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-sophie_update/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
 set +u
 conda deactivate

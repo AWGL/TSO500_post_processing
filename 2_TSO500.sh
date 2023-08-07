@@ -9,7 +9,7 @@
 # Description: Run Illumina TSO500 app for each sample then run postprocessing steps - FastQC, 
 #              GATK depth of coverage, coverage calculator, bed2hgvs, gather QC metrics. Kick
 #              off script 3 when all samples completed
-# Use:         from /Output/results/<run_id> directory, for each sample run: 
+# Use:         from /Output/results/<run_id>/TSO500/ directory, for each sample run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
 # Version:     1.0.13
 
