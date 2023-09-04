@@ -19,7 +19,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=master
+pipeline_version=main
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
@@ -148,7 +148,7 @@ set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
-sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-master/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
 set +u
 conda deactivate
