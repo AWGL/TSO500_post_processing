@@ -9,10 +9,9 @@
 # Description: Run Illumina TSO500 app for each sample then run postprocessing steps - FastQC, 
 #              GATK depth of coverage, coverage calculator, bed2hgvs, gather QC metrics. Kick
 #              off script 3 when all samples completed
-# Use:         from /Output/results/<run_id> directory, for each sample run: 
+# Use:         from /Output/results/<run_id>/TSO500/ directory, for each sample run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.10
-
+# Version:     1.0.13
 
 ##############################################################################################
 #  Setup
@@ -23,7 +22,7 @@ app_version=2.2.0
 app_dir=/data/diagnostics/pipelines/TSO500/illumina_app/TSO500_RUO_LocalApp-"$app_version"
 
 # define filepaths for post processing
-pipeline_version=master
+pipeline_version=main
 pipeline_dir=/data/diagnostics/pipelines/TSO500/TSO500_post_processing-"$pipeline_version"
 pipeline_scripts="$pipeline_dir"/scripts
 
@@ -393,7 +392,7 @@ fi
 echo $sample_id >> completed_samples.txt
 
 # only run once all samples have finished
-expected=$(cat sample_list.txt| wc -l)
+expected=$(cat samples_correct_order_*_RNA.csv | wc -l)
 complete=$(cat completed_samples.txt | wc -l)
 
 # if last sample, kick off script 3

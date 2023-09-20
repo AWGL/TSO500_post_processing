@@ -9,7 +9,7 @@ The Illumina TSO500 manual can be found on Q-Pulse
 
 ## To run the pipeline
 
-To start the pipeline from demultiplexing, 1_TSO500.sh script should be copied into the run folder (/data/output/results/runid/).
+To start the pipeline from demultiplexing, 1_TSO500.sh script should be copied into the run folder (/data/output/results/runid/TSO500/).
 From this folder run the command:
 
 `sbatch --export=raw_data=/data/raw/novaseq/<run_id>/ 1_TSO500.sh` 

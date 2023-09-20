@@ -16,7 +16,8 @@ gather_list = [f'{wd}/Demultiplex_Output']
 # add each sample analysis folder to the end of the list
 with open(in_file, 'r') as file:
     for line in file:
-        gather_list.append(f'{wd}/analysis/{line}')
+        sample = line.split(",")[0]
+        gather_list.append(f'{wd}/analysis/{sample}\n')
 
 # print the whole list seperated by spaces
 print(' '.join(gather_list))
