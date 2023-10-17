@@ -30,6 +30,5 @@ nextflow -C /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enri
     --sequencing_run ${SEQID} \
     -with-dag ${SEQID}.png \
     -with-report ${SEQID}.html \
-    -work-dir work &> pipeline.log
-
-rm -r work
+    -work-dir work \
+    --cleanup true &> pipeline.log
