@@ -1,8 +1,0 @@
-FEATURE	AVG_DEPTH	PERC_COVERAGE@270
-NTC-w3_Melanoma_combined_NRAS_GENE	50.0	10.0
-NTC-w3_Melanoma_combined_PTEN_GENE	0.0	0.0
-NTC-w3_Melanoma_combined_TP53_GENE	0.0	0.0
-NTC-w3_Melanoma_combined_KIT_GENE	0.0	0.0
-NTC-w3_Melanoma_combined_BRAF_GENE	0.0	0.0
-NTC-w3_Melanoma_combined_CDKN2A_GENE	0.0	0.0
-NTC-w3_Melanoma_combined	10.0	2.0
