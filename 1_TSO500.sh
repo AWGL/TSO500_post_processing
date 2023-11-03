@@ -143,13 +143,9 @@ runid=$(basename "$raw_data")
 
 set +u
 conda deactivate
-conda activate somatic_enrichment_nextflow
 set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
 sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
-set +u
-conda deactivate
-set -u
