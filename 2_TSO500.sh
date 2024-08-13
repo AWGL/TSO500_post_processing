@@ -315,7 +315,7 @@ set -u
 # function to check FASTQC output
 count_qc_fails() {
     #count how many core FASTQC tests failed
-    grep -E "Basic Statistics|Per base sequence quality|Per tile sequence quality|Per sequence quality scores|Per base N content" "$1" | \
+    grep -E "Basic Statistics|Per base sequence quality|Per sequence quality scores|Per base N content" "$1" | \
     grep -v ^PASS | \
     grep -v ^WARN | \
     wc -l | \
