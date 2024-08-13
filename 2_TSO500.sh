@@ -11,7 +11,7 @@
 #              off script 3 when all samples completed
 # Use:         from /Output/results/<run_id>/TSO500/ directory, for each sample run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id>,sample_id=<sample_id> 2_TSO500.sh
-# Version:     1.0.13
+# Version:     1.0.15
 
 ##############################################################################################
 #  Setup
@@ -315,7 +315,7 @@ set -u
 # function to check FASTQC output
 count_qc_fails() {
     #count how many core FASTQC tests failed
-    grep -E "Basic Statistics|Per base sequence quality|Per tile sequence quality|Per sequence quality scores|Per base N content" "$1" | \
+    grep -E "Basic Statistics|Per base sequence quality|Per sequence quality scores|Per base N content" "$1" | \
     grep -v ^PASS | \
     grep -v ^WARN | \
     wc -l | \
