@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id>/TSO500/ directory, run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.13
+# Version:     1.0.15
 
 ##############################################################################################
 #  Setup
