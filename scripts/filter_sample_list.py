@@ -78,7 +78,7 @@ for line in samplesheet:
 
 		#Write any aml referral samples to additional csv
 		if referral == "aml":
-			samplesaml = open('samples_aml_to_myeloid.csv",'a')
+			samplesaml = open("samples_aml_to_myeloid.csv",'a')
 			
 			samplesaml.write(sample_id+",myeloid\n")
 
