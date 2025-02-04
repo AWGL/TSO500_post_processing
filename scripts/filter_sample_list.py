@@ -70,11 +70,20 @@ for line in samplesheet:
 			rna.add(worksheet)
 
 		#Write to samples correct order
-		samplescorrect = open('samples_correct_order_'+worksheet+"_"+sample_type+".csv",'a')
-		
+		samplescorrect = open('samples_correct_order_'+worksheet+"_"+sample_type+".csv",'a') 
+
 		samplescorrect.write(sample_id+","+worksheet+","+sample_type+","+referral+"\n")
 		
 		samplescorrect.close()
+
+		#Write any aml referral samples to additional csv
+		if referral == "aml":
+			samplesaml = open("samples_aml_to_myeloid_"+worksheet+"_"+sample_type+".csv",'a')
+			
+			samplesaml.write(sample_id+",myeloid\n")
+
+			samplesaml.close()
+			
 
 #Write out worksheets to file
 with open('worksheets_dna.txt','w') as f:
