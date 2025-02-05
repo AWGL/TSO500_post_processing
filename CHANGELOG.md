@@ -2,7 +2,7 @@
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 It covers all changes made from v1.0.15 onwards
 
-## [Unreleased]
+## [v1.0.16] - 2025-02-05
 
 ### Added 
 - RNA referrals for new/updated panels
