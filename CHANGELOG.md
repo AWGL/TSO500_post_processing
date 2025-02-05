@@ -4,6 +4,9 @@ It covers all changes made from v1.0.15 onwards
 
 ## [Unreleased]
 
+### Added 
+- RNA referrals for new/updated panels
+
 ## [v1.0.15] - 2024-08-13
 
 ### Added
