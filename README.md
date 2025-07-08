@@ -68,3 +68,16 @@ To add a new panel, the following needs to be changed:
 **Somatic variant database:**
 - Make a new panel object in the somatic variant database that matches the filename of the new bed files (case sensitive)
 - Move the new variants bed file into the `roi/variant_calling` folder in the somatic database
+
+## Adding a new RNA panel
+
+To add a new panel, the following needs to be changed:
+
+**Samplesheet generator:**
+- Add the referral reason to the samplesheet generator (see SOP in Qpulse)
+
+**Pipeline:**
+- Add a new file to RNA_referrals named <panel>.txt with the gene names on the panel, one per line
+
+**Somatic variant database:**
+- Make a new panel object in the somatic variant database that includes the genes on the panel to filter fusions by
