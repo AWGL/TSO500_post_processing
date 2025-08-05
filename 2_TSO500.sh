@@ -46,7 +46,7 @@ coverage_bed_files_path="$pipeline_dir"/hotspot_coverage
 vendor_capture_bed="$pipeline_dir"/vendorCaptureBed_100pad_updated.bed
 preferred_transcripts="$pipeline_dir"/preferred_transcripts.txt
 worksheet=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f3)
-dna_or_rna=$(grep "$sample_id" SampleSheet_updated.csv | cut -d, -f8)
+dna_or_rna=$(grep ${sample_id}, SampleSheet_updated.csv | cut -d, -f8)
 
 
 ##############################################################################################
