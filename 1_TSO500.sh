@@ -108,7 +108,7 @@ for file in *samples_correct_order*_RNA.csv*;
 do
 if [ -f "$file" ];
 then
-	cat samples_correct_order*_RNA.csv | while read line; do
+	cat ${file} | while read line; do
 
 	    sample_id=$(echo ${line} | cut -f 1 -d ",")
 	    echo kicking off pipeline for $sample_id
