@@ -40,8 +40,9 @@ set +u
 conda deactivate
 set -u
 
-#Only remove work directory if successful pipeline completion
+#Only remove work directory and Raw Reads if successful pipeline completion
 if [[ `tail -n 1 results/post_processing_finished.txt` == "${SEQID} success!." ]]
 then
     rm -r work/
+    rm -r Raw_Reads/
 fi
