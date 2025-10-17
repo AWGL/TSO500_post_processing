@@ -121,22 +121,12 @@ then
 fi
 done
 
-#Take DNA FastQ and move to new folder
+#Kick off nextflow for DNA
 mkdir DNA_Analysis
 #Copy samples_correct_order file
 cp samples_correct_order_*_DNA.csv ./DNA_Analysis
 
 cd DNA_Analysis
-mkdir Raw_Reads
-while read samples
-do
-    sampleID=$(echo ${samples} | cut -f 1 -d ",")
-    mkdir Raw_Reads/${sampleID}/
-    #Combine L001 to a single fastq file
-    cat ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L001_R1_001.fastq.gz ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L002_R1_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R1.fastq.gz
-    #Combine L002 to a single fastq file
-    cat ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L001_R2_001.fastq.gz ../Demultiplex_Output/Logs_Intermediates/FastqGeneration/${sampleID}/${sampleID}_S*_L002_R2_001.fastq.gz > Raw_Reads/${sampleID}/${sampleID}_R2.fastq.gz
-done < samples_correct_order_*_DNA.csv
 
 #Get RUN ID
 runid=$(basename "$raw_data")
@@ -147,5 +137,5 @@ set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
-sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/DNA_Analysis/Raw_Reads/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/Demultiplex_Output/Logs_Intermediates/FastqGeneration/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
 
