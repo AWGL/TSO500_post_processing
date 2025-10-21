@@ -48,6 +48,9 @@ set -u
 # make folder for database output
 mkdir Gathered_Results/Database
 
+#Get Run ID
+runid=$(basename "$raw_data")
+
 ##############################################################################################
 #  Generate inputs for variants database - RNA
 #  filter fusions by referral type for contamination script
@@ -91,7 +94,7 @@ for worksheet_id in $(cat worksheets_rna.txt); do
 
         # make database upload sample list
         if [[ "$sample" != NTC* ]]; then
-            echo "$sample","$worksheet_id",RNA,"$referral","$sample_reads","$ntc_reads" >> Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
+            echo "$sample","$worksheet_id",TSO500_RNA,"$referral","$runid",GRCh37,"$sample_reads","$ntc_reads" >> Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
         fi
 	done
 done

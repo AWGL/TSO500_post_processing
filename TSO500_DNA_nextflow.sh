@@ -27,7 +27,7 @@ conda activate somatic_enrichment_nextflow
 set -u
 
 nextflow -C /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-main/config/somatic_enrichment_nextflow.config run /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-main/somatic_enrichment_nextflow.nf \
-    --fastqs ${FASTQ_PATH}/\*/\*\{R1.fastq.gz,R2.fastq.gz\} \
+    --fastqs ${FASTQ_PATH}/\*/\*.fastq.gz \
     --dna_list ${SAMPLES_ORDER} \
     --publish_dir results \
     --sequencing_run ${SEQID} \
@@ -44,5 +44,4 @@ set -u
 if [[ `tail -n 1 results/post_processing_finished.txt` == "${SEQID} success!." ]]
 then
     rm -r work/
-    rm -r Raw_Reads/
 fi
