@@ -1,0 +1,8 @@
+[project]
+name = "tso500-post-processing"
+version = "0.1.0"
+requires-python = ">=3.11,<=3.12"
+dependencies = [
+    "pandas>=2.3.3",
+    "seaborn>=0.13.2",
+]
