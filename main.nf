@@ -1,4 +1,6 @@
 include { DEMULTIPLEX } from './workflows/demultiplex.nf'
+include { ANALYSIS } from './workflows/analysis.nf'
+include { QC } from './workflows/qc.nf'
 
 
 workflow {
