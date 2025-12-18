@@ -11,4 +11,6 @@ workflow {
         resources,
         run_folder
     )
+
+    rna_fastq_ch = DEMULTIPLEX.out.rna_fastq_ch
 }
