@@ -6,7 +6,7 @@ process APP_DEMULTIPLEX {
     
     container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/tso500_local_app_custom_entrypoint:ruo-2.2.0.12"
 
-    publishDir "${params.output_dir}"
+    publishDir "${params.output_dir}/Demultiplex_Output"
 
     input:
     path(sample_sheet, name: "samplesheet/SampleSheet.csv")
@@ -14,7 +14,8 @@ process APP_DEMULTIPLEX {
     path(run_folder, name: "run-folder")
 
     output:
-    path('analysis-folder')
+    path('Logs_Intermediates'), emit: demultiplex_output
+    path('Logs_Intermediates/**/*.fastq.gz'), emit: fastq
 
     script:
     """
@@ -41,7 +42,6 @@ process APP_DEMULTIPLEX {
 
     echo "Running cromwell"
     java -jar /opt/cromwell/cromwell-36.jar run -i inputs.json /opt/illumina/wdl/TSO500Workflow.wdl
-
-    mv /opt/illumina/analysis-folder analysis-folder
+    mv /opt/illumina/analysis-folder/Logs_Intermediates .
     """    
 }
