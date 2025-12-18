@@ -19,4 +19,9 @@ workflow {
         resources,
         rna_fastq_ch
     )
+
+    QC(
+        rna_fastq_ch,
+        ANALYSIS.out.metrics_output
+    )
 }
