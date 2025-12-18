@@ -1,5 +1,6 @@
 include { FASTQC } from '../modules/qc/fastqc.nf'
 include { CREATE_SAMPLE_QC_FILE } from '../modules/qc/create_sample_qc_file.nf'
+include { MERGE_QC_FILES } from '../modules/qc/merge_qc_files.nf'
 
 workflow QC {
     take:
@@ -24,4 +25,9 @@ workflow QC {
     joined_qc_ch = FASTQC.out.fastqc_summary.join(metrics_output)
 
     CREATE_SAMPLE_QC_FILE(joined_qc_ch)
+
+    // Group sample by worklist 
+    worksheet_qc_channel = CREATE_SAMPLE_QC_FILE.out.sample_qc_file.groupTuple(by: 1)
+
+    MERGE_QC_FILES(worksheet_qc_channel)
 }
