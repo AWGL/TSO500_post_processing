@@ -1,10 +1,15 @@
 include { FASTQC } from '../modules/qc/fastqc.nf'
+include { CREATE_SAMPLE_QC_FILE } from '../modules/qc/create_sample_qc_file.nf'
 
 workflow QC {
     take:
     rna_fastq_ch
-    
+    metrics_output
+
     main:
+    // Turn a channel like [sample1, [sample1_L001_R2.fastq.gz, sample1_L001_R1.fastq.gz...]]
+    // in to [[sample1, sample1_L001_R1.fastq.gz], [sample1, sample1_L001_R2.fastq.gz]] then
+    // group by sample_id, lane and read. The same lane and read can have multiple fastq files
     rna_fastqc_ch = rna_fastq_ch
         .transpose()
         .map { sample_id, _worksheet, _type, _referral, fastq ->
@@ -14,5 +19,9 @@ workflow QC {
         .groupTuple(by: [0, 1, 2])
 
     FASTQC(rna_fastqc_ch)
-}
 
+    // Join fastqc results to app analysis metrics on first element of tuple (sample id)
+    joined_qc_ch = FASTQC.out.fastqc_summary.join(metrics_output)
+
+    CREATE_SAMPLE_QC_FILE(joined_qc_ch)
+}
