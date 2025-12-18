@@ -13,4 +13,10 @@ workflow {
     )
 
     rna_fastq_ch = DEMULTIPLEX.out.rna_fastq_ch
+
+    ANALYSIS(
+        sample_sheet,
+        resources,
+        rna_fastq_ch
+    )
 }
