@@ -1,7 +1,7 @@
 include { DEMULTIPLEX } from './workflows/demultiplex.nf'
 include { ANALYSIS } from './workflows/analysis.nf'
 include { QC } from './workflows/qc.nf'
-
+include { DATABASE } from './workflows/database.nf'
 
 workflow {
     sample_sheet = file(params.sample_sheet, checkIfExists: true)
@@ -25,5 +25,9 @@ workflow {
     QC(
         rna_fastq_ch,
         ANALYSIS.out.metrics_output
+    )
+
+    DATABASE(
+        ANALYSIS.out.results
     )
 }
