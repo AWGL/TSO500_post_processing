@@ -30,4 +30,7 @@ workflow QC {
     worksheet_qc_channel = CREATE_SAMPLE_QC_FILE.out.sample_qc_file.groupTuple(by: 1)
 
     MERGE_QC_FILES(worksheet_qc_channel)
+
+    emit:
+    sample_qc = CREATE_SAMPLE_QC_FILE.out.sample_qc_file
 }

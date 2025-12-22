@@ -1,20 +1,21 @@
 process APP_PIPELINE {
     memory 64.GB
     cpus 16
-    
+
     container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/tso500_local_app_custom_entrypoint:ruo-2.2.0.12"
 
     publishDir "${params.output_dir}/analysis/${sample_id}"
 
     input:
-    path(sample_sheet, name: "samplesheet/SampleSheet.csv")
-    path(resources, name: "resources")
+    path sample_sheet, name: "samplesheet/SampleSheet.csv"
+    path resources, name: "resources"
     tuple val(sample_id), val(worksheet), val(type), val(referral), path(fastqs, name: "fastq-folder/*")
 
     output:
-    path("Logs_Intermediates/")
+    path "Logs_Intermediates/"
     tuple val(sample_id), val(worksheet), val(referral), path("Results/"), emit: results
-    tuple val(sample_id), val(worksheet), path("Results/MetricsOutput.tsv"), emit: metrics_output
+    tuple val(sample_id), val(worksheet), val(referral), path("Results/MetricsOutput.tsv"), emit: metrics_output
+    tuple val(sample_id), val(worksheet), path("Logs_Intermediates/RnaMarkDuplicates/${sample_id}/${sample_id}.bam"), emit: bams
 
     script:
     """

@@ -6,10 +6,10 @@ process CREATE_SAMPLE_QC_FILE {
     publishDir "${params.output_dir}/analysis/${sample_id}/"
 
     input:
-    tuple val(sample_id), path(fastqc_summary), val(worksheet), path(metrics_file)
+    tuple val(sample_id), path(fastqc_summary), val(worksheet), val(referral), path(metrics_file)
 
     output:
-    tuple val(sample_id), val(worksheet), path("${sample_id}_RNA_QC.txt"), emit: sample_qc_file
+    tuple val(sample_id), val(worksheet), val(referral), path("${sample_id}_RNA_QC.txt"), emit: sample_qc_file
 
     script:
     """

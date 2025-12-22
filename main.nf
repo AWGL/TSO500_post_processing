@@ -11,7 +11,7 @@ workflow {
     DEMULTIPLEX(
         sample_sheet,
         resources,
-        run_folder
+        run_folder,
     )
 
     rna_fastq_ch = DEMULTIPLEX.out.rna_fastq_ch
@@ -19,15 +19,25 @@ workflow {
     ANALYSIS(
         sample_sheet,
         resources,
-        rna_fastq_ch
+        rna_fastq_ch,
     )
 
     QC(
         rna_fastq_ch,
-        ANALYSIS.out.metrics_output
+        ANALYSIS.out.metrics_output,
     )
 
+    ntc_bam_ch = ANALYSIS.out.bams.filter { sample_id, _worksheet, _bams ->
+        {
+            sample_id.contains("NTC")
+        }
+    }
+
     DATABASE(
-        ANALYSIS.out.results
+        ANALYSIS.out.results,
+        ntc_bam_ch,
+        QC.out.sample_qc,
+        params.run_id,
+        DEMULTIPLEX.out.rna_samples_list,
     )
 }

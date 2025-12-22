@@ -6,14 +6,14 @@ process MERGE_QC_FILES {
     publishDir "${params.output_dir}/"
 
     input:
-    tuple val(sample_id), val(worksheet), path(qc_files)
+    tuple val(sample_id), val(worksheet), val(referral), path(qc_files)
 
     output:
-    path("RNA_QC_combined.txt")
+    path "RNA_QC_combined.txt"
 
     script:
     """
-    for file in $qc_files; do
+    for file in ${qc_files}; do
         if [[ ! -f RNA_QC_combined.txt ]]; then
             cat \$file > RNA_QC_combined.txt
         else
@@ -22,3 +22,4 @@ process MERGE_QC_FILES {
     done
     """
 }
+

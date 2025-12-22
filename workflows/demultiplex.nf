@@ -7,7 +7,7 @@ workflow DEMULTIPLEX {
     resources
     run_folder
 
-    main:                                                                                   
+    main:
     APP_DEMULTIPLEX(
         sample_sheet,
         resources,
@@ -36,4 +36,5 @@ workflow DEMULTIPLEX {
 
     emit:
     rna_fastq_ch = rna_fastq_ch
+    rna_samples_list = FILTER_SAMPLE_SHEET.out.rna_sample_list
 }
