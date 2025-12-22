@@ -1,0 +1,3 @@
+FROM 132205776083.dkr.ecr.eu-west-2.amazonaws.com/tso500_local_app:ruo-2.2.0.12
+
+ENTRYPOINT []

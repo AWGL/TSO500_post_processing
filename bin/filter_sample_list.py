@@ -1,3 +1,5 @@
+#!/usr/bin/env -S uv run --script
+
 """
 Produce various sample/ worksheet lists for use downstream
 include dictionary to translate referral types
