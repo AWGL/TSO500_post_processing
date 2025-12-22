@@ -38,7 +38,8 @@ workflow DATABASE {
         }
     )
 
-    fusion_check_worksheet_ch = FUSION_CHECK.out.fusion_check.groupTuple(by: 1).view()
+    fusion_check_worksheet_ch = FUSION_CHECK.out.fusion_check.groupTuple(by: 1)
+
     CONTAMINATION(
         rna_samples_list,
         fusion_check_worksheet_ch,
