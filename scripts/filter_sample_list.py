@@ -53,9 +53,16 @@ for line in samplesheet:
 		#Append Sample ID (first element in list) to sample list
 		samplelist.write(sample_id+"\n")
 
+		# Split the decription column up, as now additional referrals section
+		desc_parts = description.split(";")
+		desc_dict = {}
+		for part in desc_parts:
+			if "=" in part:
+				key, value = part.split("=", 1)
+				desc_dict[key] = value
+
 		#Get referral from Description (tenth element in list), split by ; and get third element
-		referral = description.split(";")[2]
-		referral = referral.split("=")[1]
+		referral = desc_dict.get("referral", "null")
 
 		#if RNA, update referral based on dictionary
 		if sample_type == "RNA" and (referral in referral_dict):
@@ -83,7 +90,18 @@ for line in samplesheet:
 			samplesaml.write(sample_id+",myeloid\n")
 
 			samplesaml.close()
-			
+
+		# Get additional referrals to make one csv per referral
+		additional_referrals = desc_dict.get("additional_referrals", "")
+		if additional_referrals:
+			for add_ref in additional_referrals.split(","):
+				add_ref = add_ref.strip()
+				if add_ref:
+					add_ref_file = open(
+						"samples_additional_referral_"+add_ref+"_"+worksheet+"_"+sample_type+".csv", 'a'	
+					)
+					add_ref_file.write(sample_id+","+add_ref+"\n")
+					add_ref_file.close()
 
 #Write out worksheets to file
 with open('worksheets_dna.txt','w') as f:
