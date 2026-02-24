@@ -46,8 +46,8 @@ for line in samplesheet:
 
 		#Get columns we need from sample sheet
 		sample_id = line[0]
-		worksheet = line[2]
-		sample_type = line[7]
+		worksheet = line[1]
+		sample_type = line[8]
 		description = line[9]
 
 		#Append Sample ID (first element in list) to sample list
