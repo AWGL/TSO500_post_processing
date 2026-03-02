@@ -73,7 +73,7 @@ set -u
 cp "$raw_data"/SampleSheet.csv .
 
 # remove header from samplesheet
-sed -n -e '/Sample_ID,Sample_Name/,$p' SampleSheet.csv >> SampleSheet_updated.csv
+sed -n -e '/Sample_ID,Sample_Plate/,$p' SampleSheet.csv >> SampleSheet_updated.csv
 
 # make a list of samples and get correct order of samples for each worksheet
 python "$pipeline_scripts"/filter_sample_list.py
