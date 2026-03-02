@@ -35,7 +35,7 @@ for line in samplesheet:
 	line = line.strip()
 
 	#Skip if header line
-	if line.startswith('Sample'):
+	if line.startswith("Sample"):
 		
 		next
 
@@ -44,11 +44,12 @@ for line in samplesheet:
 		#Split line into list
 		line = line.split(",")
 
+		
 		#Get columns we need from sample sheet
-		sample_id = line[0]
-		worksheet = line[1]
-		sample_type = line[8]
-		description = line[9]
+		sample_id = line["Sample_ID"]
+		worksheet = line["Sample_Plate"]
+		sample_type = line["Sample_Type"]
+		description = line["Description"]
 
 		#Append Sample ID (first element in list) to sample list
 		samplelist.write(sample_id+"\n")
