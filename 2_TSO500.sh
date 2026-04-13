@@ -93,11 +93,6 @@ done
 #  Gather QC metrics for sample
 ##############################################################################################
 
-# activate conda env
-set +u
-conda activate TSO500_post_processing
-set -u
-
 # function to check FASTQC output
 count_qc_fails() {
     #count how many core FASTQC tests failed
