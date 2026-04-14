@@ -1,5 +1,9 @@
 # TSO500_post_processing
 
+This pipeline
+* Demultiplexes with the Illumina app
+* Runs the RNA samples through the Illumina app
+* Submits the DNA samples to run through the [somatic_enrichment_nextflow](https://github.com/AWGL/somatic_enrichment_nextflow) pipeline
 
 ## Documentation
 
@@ -16,30 +20,23 @@ From this folder run the command:
 
 The raw data directory must contain the SampleSheet.csv. 
 
-## To re-run DNA samples with a new referral
+## To run a DNA sample
 
-The script rerun_coverage.sh allows the coverage json file to be produced for a DNA sample with a new referral in all scenarios (analysis/ folder present or deleted). This can be run as follows, as transfer, from any location:
-
-`sbatch rerun_coverage.sh <run_id> <sample_id> <worksheet> <new referral>`
-
-The new coverage file will then be present in Gathered_Results/Database/ alongside a new samples list file for upload to the database.
+To run a DNA sample through the Illumina app, please run an old release (v1.1.1)
 
 ## Duty scientist responsibilites
 The duty scientist is responsible for the following tasks:
-* Creating the TSO500 samplesheet- see below for requirements
-* Signing off the run in autoqc database - for more information refer to the AutoQC sop
-* Importing the data into the data into the somatic variant database
-
+* Signing off the run in autoqc database and GLIMS (NOTE: the RNA must now be signed off with the DNA)
+* Signing off the run in SVD
 
 ## Samplesheet requirements
 * The samplesheet must contain the samples in the correct order for the RNA contamination results to be valid
 * Every NTC must be named NTC-worksheetid
 
 
-
 ## Unit tests
 
-Unit tests have been created against the following scripts: `tsv2db.py`, `coverage2json.py`, `fusion_check_with_ntc.py`.
+Unit tests have been created against the following scripts: `fusion_check_with_ntc.py`.
 
 To run all unit tests:
 - copy these scripts into the `tests/` folder (relative imports not currently working, will be fixed in future version)
@@ -50,34 +47,15 @@ To run all unit tests:
 To run tests on a specific script, follow the steps above but run `python -m unittest <test_script_name>`
 
 
-## Adding a new DNA panel
-
-To add a new panel, the following needs to be changed:
-
-**Samplesheet generator:**
-- Add the referral reason to the samplesheet generator (see SOP in Qpulse) and make sure it matches the filename of the new bed files (case sensitive)
-
-**Pipeline:**
-- Generate bed files for the new panel
-  - The `hotspot_variants/*bed` bed file and `hotspot_coverage/*combined.bed` files are required
-  - The `hotspot_coverage/*hotspots.bed` and `hotspot_coverage/*genescreen.bed` files are optional
-  - Filenames should be all lowercase
-- Make sure that all regions in the new panel are covered in `vendorCaptureBed_100pad_updated.bed` (the bed file file used to generate the depth of coverage file)
-- Make sure that any flanking regions are added to the `TSO_extra_padding_chr.interval_list` file - Illumina bed file only goes +/- 2bp so this file contains the extra 3bp to make it +/- 5bp
-
-**Somatic variant database:**
-- Make a new panel object in the somatic variant database that matches the filename of the new bed files (case sensitive)
-- Move the new variants bed file into the `roi/variant_calling` folder in the somatic database
-
 ## Adding a new RNA panel
 
 To add a new panel, the following needs to be changed:
 
 **Samplesheet generator:**
-- Add the referral reason to the samplesheet generator (see SOP in Qpulse)
+- Add the referral to the SampleSheet Generator, including the mapped test directory code
 
 **Pipeline:**
 - Add a new file to RNA_referrals named <panel>.txt with the gene names on the panel, one per line
 
 **Somatic variant database:**
-- Make a new panel object in the somatic variant database that includes the genes on the panel to filter fusions by
+- Make a new Panel object in SVD
