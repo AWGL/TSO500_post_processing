@@ -137,5 +137,5 @@ set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
-sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/Demultiplex_Output/Logs_Intermediates/FastqGeneration/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/Demultiplex_Output/Logs_Intermediates/FastqGeneration/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid} /data/output/results/${runid}/TSO500/SampleSheet_updated.csv
 
