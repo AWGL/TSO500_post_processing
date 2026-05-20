@@ -4,7 +4,7 @@ FROM debian:bookworm-20251117-slim
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-COPY pyproject.toml uv.lock ./
+COPY ./containers/tso500_post_processing/pyproject.toml ./containers/tso500_post_processing/uv.lock ./
 
 RUN apt update && apt install -y dos2unix procps
 
