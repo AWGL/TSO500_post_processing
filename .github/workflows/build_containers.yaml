@@ -1,0 +1,41 @@
+name: Build containers
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  build_and_push:
+    name: Build and push ${{ matrix.image }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - image: tso500_post_processing
+            containerfile: ./containers/tso500_post_processing/Containerfile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.image }}
+        id: build
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ matrix.image }}
+          tags: ${{ github.ref_name }}
+          containerfiles: |
+            ${{ matrix.containerfile }}
+
+      - name: Push ${{ matrix.image }}
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build.outputs.image }}
+          tags: ${{ steps.build.outputs.tags }}
+          registry: ghcr.io/awgl
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
