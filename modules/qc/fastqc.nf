@@ -1,7 +1,7 @@
 process FASTQC {
     tag "${sample_id}_${lane_id}_${read}"
 
-    container "community.wave.seqera.io/library/fastqc:0.11.9--fd0125189547cb9c"
+    label 'fastqc_container'
 
     publishDir "${params.output_dir}/analysis/${sample_id}/FastQC/"
 

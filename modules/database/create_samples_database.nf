@@ -4,8 +4,6 @@ process MERGE_SAMPLES_DATABASE {
 
     publishDir "${params.output_dir}/Gathered_Results/Database/"
 
-    container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/ghcr/awgl/tso500_post_processing:dev"
-
     input:
     tuple val(worksheet), stdin
 
@@ -22,7 +20,7 @@ process WRITE_SAMPLE_DB_LINE {
     cpus 1
     memory 512.MB
 
-    container "community.wave.seqera.io/library/samtools:1.23--12d9384dd0649f36"
+    label 'samtools_container'
 
     input:
     val run_id

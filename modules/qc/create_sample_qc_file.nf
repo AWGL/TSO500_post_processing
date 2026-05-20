@@ -1,8 +1,6 @@
 process CREATE_SAMPLE_QC_FILE {
     tag "${sample_id}"
 
-    container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/ghcr/awgl/tso500_post_processing:dev"
-
     publishDir "${params.output_dir}/analysis/${sample_id}/"
 
     input:

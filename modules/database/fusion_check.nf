@@ -1,5 +1,4 @@
 process FUSION_CHECK {
-    container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/ghcr/awgl/tso500_post_processing:dev"
 
     publishDir "${params.output_dir}/Gathered_Results/Database/"
 

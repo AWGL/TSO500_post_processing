@@ -2,8 +2,6 @@ process FILTER_SAMPLE_SHEET {
     cpus 1
     memory 512.MB
 
-    container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/ghcr/awgl/tso500_post_processing:dev"
-
     input:
     path sample_sheet
 

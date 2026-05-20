@@ -2,10 +2,9 @@ process APP_DEMULTIPLEX {
     memory 64.GB
     cpus 16
 
-    label 'demultiplex'
+    label 'app_container'
+    label 'demultiplex_queue'
     
-    container "132205776083.dkr.ecr.eu-west-2.amazonaws.com/tso500_local_app_custom_entrypoint:ruo-2.2.0.12"
-
     publishDir "${params.output_dir}/Demultiplex_Output"
 
     input:
