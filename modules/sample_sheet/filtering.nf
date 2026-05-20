@@ -12,13 +12,8 @@ process FILTER_SAMPLE_SHEET {
 
     script:
     """
-    # remove header from samplesheet
-    sed -n -e '/Sample_ID,Sample_Name/,\$p' SampleSheet.csv >> SampleSheet_updated.csv
-
     # make a list of samples and get correct order of samples for each worksheet
     filter_sample_list.py
 
-    # Run dos2unix here
-    dos2unix SampleSheet_updated.csv
     """
 }
