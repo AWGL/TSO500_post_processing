@@ -8,7 +8,7 @@
 # Description: Demultiplex run using Illumina TSO500 app and kick off script 2 for each sample
 # Use:         from /Output/results/<run_id>/TSO500/ directory, run: 
 #              sbatch --export=raw_data=/data/raw/novaseq/<run_id> 1_TSO500.sh
-# Version:     1.0.15
+# Version:     1.1.2
 
 ##############################################################################################
 #  Setup
@@ -137,5 +137,5 @@ set -u
 
 #Kick off nextflow
 echo "Kicking off DNA Nextflow"
-sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/Demultiplex_Output/Logs_Intermediates/FastqGeneration/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid}
+sbatch /data/diagnostics/pipelines/TSO500/TSO500_post_processing-main/TSO500_DNA_nextflow.sh /data/output/results/${runid}/TSO500/Demultiplex_Output/Logs_Intermediates/FastqGeneration/ /data/output/results/${runid}/TSO500/DNA_Analysis/samples_correct_order_*_DNA.csv ${runid} /data/output/results/${runid}/TSO500/SampleSheet_updated.csv
 
