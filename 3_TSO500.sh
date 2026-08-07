@@ -91,6 +91,9 @@ for worksheet_id in $(cat worksheets_rna.txt); do
         else
             cat analysis/"$sample"/"$sample"_RNA_QC.txt | tail -n1 >> RNA_QC_combined.txt
         fi
+        
+        # make database upload sample list header
+        echo "sample,worksheet,assay,referral,run,genome_build" > Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
 
         # make database upload sample list
         if [[ "$sample" != NTC* ]]; then
