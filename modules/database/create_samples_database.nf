@@ -12,6 +12,7 @@ process MERGE_SAMPLES_DATABASE {
 
     script:
     """
+    echo "sample,worksheet,assay,referral,run,genome_build,sample_reads,ntc_reads" > samples_database_${worksheet}_RNA.csv
     cat > samples_database_${worksheet}_RNA.csv 
     """
 }
