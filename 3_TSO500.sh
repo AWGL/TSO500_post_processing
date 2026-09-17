@@ -62,6 +62,9 @@ for worksheet_id in $(cat worksheets_rna.txt); do
     # pull out NTC read count
     ntc_reads=$(samtools view -F4 -c analysis/NTC-"$worksheet_id"/Logs_Intermediates/RnaMarkDuplicates/NTC-"$worksheet_id"/NTC-"$worksheet_id".bam)
 
+    # make database upload sample list header
+    echo "sample,worksheet,assay,referral,run,genome_build,coverage,ntc_coverage" > Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
+
     for line in $(cat samples_correct_order_"$worksheet_id"_RNA.csv); do
         sample="$(echo "$line" | cut -d, -f1)"
         worksheet_id=$(echo "$line" | cut -d, -f2)
@@ -91,7 +94,7 @@ for worksheet_id in $(cat worksheets_rna.txt); do
         else
             cat analysis/"$sample"/"$sample"_RNA_QC.txt | tail -n1 >> RNA_QC_combined.txt
         fi
-
+        
         # make database upload sample list
         if [[ "$sample" != NTC* ]]; then
             echo "$sample","$worksheet_id",TSO500_RNA,"$referral","$runid",GRCh37,"$sample_reads","$ntc_reads" >> Gathered_Results/Database/samples_database_"$worksheet_id"_RNA.csv
