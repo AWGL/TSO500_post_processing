@@ -81,3 +81,16 @@ To add a new panel, the following needs to be changed:
 
 **Somatic variant database:**
 - Make a new panel object in the somatic variant database that includes the genes on the panel to filter fusions by
+
+
+## Cloud version
+Here is an example command for running the pipeline:
+```
+nextflow -C nextflow.config run main.nf \
+--run_id "<run_id>" \
+--sample_sheet "s3://<bcl_bucket>/<run_id>/SampleSheet.csv" \
+--run_folder "s3://<bcl_bucket>/<run_id>/" \
+--resources "s3://<reference_bucket>/tso500/TSO500_RUO_LocalApp-2.2.0/resources/" \
+--output_dir "s3://<results_bucket>/<run_id>/TSO500/" \
+-work-dir "s3://<work_bucket>/<run_id>/TSO500/"
+```
