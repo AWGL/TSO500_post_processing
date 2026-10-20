@@ -5,7 +5,7 @@
 #SBATCH --partition=high
 
 # Description: #Kick off nextflow script to run TSO500 DNA analysis
-# Use: TSO500_DNA_nextflow.sh <PATH TO RAW READS> <PATH AND NAME OF SAMPLES ORDER DNA FILE> <SEQUENCING RUN ID>
+# Use: TSO500_DNA_nextflow.sh <PATH TO RAW READS> <PATH AND NAME OF SAMPLES ORDER DNA FILE> <SEQUENCING RUN ID> <PATH TO SAMPLESHEET UPDATED>
 
 #####################################################################
 # Set up
@@ -14,6 +14,7 @@
 FASTQ_PATH=$1
 SAMPLES_ORDER=$2
 SEQID=$3
+SAMPLESHEET=$4
 
 #####################################################################
 # Run Command
@@ -29,6 +30,7 @@ set -u
 nextflow -C /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-main/config/somatic_enrichment_nextflow.config run /data/diagnostics/pipelines/somatic_enrichment_nextflow/somatic_enrichment_nextflow-main/somatic_enrichment_nextflow.nf \
     --fastqs ${FASTQ_PATH}/\*/\*.fastq.gz \
     --dna_list ${SAMPLES_ORDER} \
+    --samplesheet ${SAMPLESHEET} \
     --publish_dir results \
     --sequencing_run ${SEQID} \
     -with-dag ${SEQID}.png \
