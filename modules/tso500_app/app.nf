@@ -1,5 +1,5 @@
 process APP_PIPELINE {
-    memory 64.GB
+    memory 60.GB
     cpus 16
 
     label 'app_container'
