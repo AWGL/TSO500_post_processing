@@ -1,3 +1,5 @@
+#!/usr/bin/env -S uv run --script
+
 """
 This script loads in the sample combined variant output, the NTC combined variant output, and the sample all fusions file.
 Taking the above files, the script will parse these files in pandas and creates a table that compares the sample to the NTC file
