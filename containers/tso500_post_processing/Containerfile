@@ -4,9 +4,14 @@ FROM debian:bookworm-20251117-slim
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-COPY ./containers/tso500_post_processing/pyproject.toml ./containers/tso500_post_processing/uv.lock ./
+COPY pyproject.toml uv.lock ./
 
-RUN apt update && apt install -y procps
+RUN apt update && apt install -y procps curl unzip
 
 RUN uv sync
 
+# Install AWS CLI
+RUN cd /tmp/ && \ 
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install
